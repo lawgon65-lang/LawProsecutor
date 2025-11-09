@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+    <title>LawNeed</title>
+    
+    
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Library for creating Excel files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <style>
+        /* Custom font - Sarabun */
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap');
+        body {
+            font-family: "Sarabun", sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        .btn-primary {
+            background: linear-gradient(to bottom, #4682B4, #3a6a9b);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(to bottom, #3a6a9b, #2f537a);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        .tab-button.active {
+            background: linear-gradient(to bottom, #4682B4, #3a6a9b);
+            color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .tab-button {
+            transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 0.5rem;
+            border: none;
+        }
+        .main-tab-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #ccc;
+        }
+        .main-tab-button {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            font-weight: bold;
+            color: #6B7280;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+            flex-grow: 1;
+            text-align: center;
+        }
+        .main-tab-button.active {
+            color: #3a6a9b;
+            border-color: #3a6a9b;
+        }
+        .label-icon {
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 0.5rem;
+            width: 20px;
+            height: 20px;
+        }
+        .label-icon.book-svg { fill: #20B2AA; }
+        .label-icon.document { fill: #20B2AA; }
+        .saved-note-card {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+        .delete-note-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            cursor: pointer;
+        }
+        .delete-note-btn svg {
+            stroke: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="w-full max-w-xl p-6 bg-white rounded-xl shadow-lg">
+        <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">ค้นหาตัวบทกฎหมาย</h1>
+        
+        <div class="main-tab-container">
+            <div class="main-tab-button active" id="mainCodeTab" onclick="window.selectMainTab('code')">ประมวล</div>
+            <div class="main-tab-button" id="mainActTab" onclick="window.selectMainTab('act')">พ.ร.บ.</div>
+            <div class="main-tab-button" id="mainNotesTab" onclick="window.selectMainTab('notes')">บันทึก</div>
+        </div>
+
+        <!-- Search Content -->
+        <div id="searchContent">
+            <label for="lawSelect" class="block text-gray-700 text-sm font-medium mb-2">
+                <svg class="label-icon book-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M18 2H6C4.895 2 4 2.895 4 4v16c0 1.105.895 2 2 2h12c1.105 0 2-.895 2-2V4c0-1.105-.895-2-2-2zM6 4h12v14H6V4zm2 16h8v-1H8v1zm0-3h8v-1H8v1z"/>
+                </svg>
+                ชื่อกฎหมาย
+            </label>
+            <select id="lawSelect" class="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"></select>
+
+            <div class="tab-container flex gap-2 mb-4">
+                <div class="tab-button flex-1 p-3 text-center bg-gray-200 rounded-lg cursor-pointer font-semibold text-gray-700 shadow-sm" id="sectionTab" onclick="window.selectTab('section')">มาตรา</div>
+                <div class="tab-button flex-1 p-3 text-center bg-gray-200 rounded-lg cursor-pointer font-semibold text-gray-700 shadow-sm" id="keywordTab" onclick="window.selectTab('keyword')">คำสำคัญ</div>
+            </div>
+
+            <div id="sectionSearch" class="search-mode">
+                <label for="sectionNumberInput" class="block text-gray-700 text-sm font-medium mb-2">
+                    <svg class="label-icon document" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M14 2H6C4.895 2 4 2.895 4 4v16c0 1.105.895 2 2 2h12c1.105 0 2-.895 2-2V8l-6-6zm-2 16H8v-2h4v2zm0-4H8v-2h4v2zm-1-7V3.5L18.5 9H13c-.552 0-1-.448-1-1z"/>
+                    </svg>
+                    เลขมาตรา
+                </label>
+                <div class="search-input-group flex flex-col sm:flex-row gap-3 mb-4">
+                    <input type="text" id="sectionNumberInput" placeholder="เช่น 56" class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base" oninput="this.value = this.value.replace(/[^0-9]/g, '')" inputmode="numeric">
+                    <select id="sectionSuffixSelect" class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base">
+                        <option value="">ไม่เลือก</option>
+                        <option value="ทวิ">ทวิ</option>
+                        <option value="ตรี">ตรี</option>
+                        <option value="จัตวา">จัตวา</option>
+                        <option value="เบญจ">เบญจ</option>
+                        <option value="ฉ">ฉ</option>
+                        <option value="สัตต">สัตต</option>
+                        <option value="อัฏฐ">อัฏฐ</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="keywordSearch" class="search-mode hidden">
+                <label for="keywordInput" class="block text-gray-700 text-sm font-medium mb-2">คำสำคัญ</label>
+                <input type="text" id="keywordInput" class="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base" placeholder="ค้นหาคำที่เกี่ยวข้อง เช่น บำบัด ป.ป.ส.">
+            </div>
+
+            <button class="w-full p-3 text-white font-bold rounded-lg shadow-md btn-primary" onclick="window.searchLaw()">ค้นหา</button>
+        </div>
+
+        <!-- Saved Notes Content -->
+        <div id="savedNotesView" class="hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">โน้ตที่บันทึกไว้</h2>
+                <div class="flex gap-2">
+                    <button onclick="window.importNotesFromExcel()" class="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-1 text-sm" title="นำเข้าจาก Excel">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><polyline points="15 15 12 12 9 15"></polyline></svg>
+                        <span>นำเข้า</span>
+                    </button>
+                    <button onclick="window.exportNotesToExcel()" class="p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-1 text-sm" title="ส่งออกเป็น Excel">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><polyline points="9 15 12 12 15 15"></polyline></svg>
+                        <span>ส่งออก</span>
+                    </button>
+                </div>
+            </div>
+            <div id="savedNotesList" class="space-y-4">
+                <!-- Saved notes will be rendered here by JS -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Hidden file input for import -->
+    <input type="file" id="importExcelInput" class="hidden" accept=".xlsx, .xls">
+
+    <script>
+        // PWA Setup: Manifest and Service Worker
+        function registerPwa() {
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('./sw.js')
+                        .then(registration => console.log('Service Worker registered:', registration.scope))
+                        .catch(error => console.log('Service Worker registration failed:', error));
+                });
+            }
+        }
+    </script>
+    <script>
+    // In-memory data store for laws
+    const lawData = {
+      "code": {
+        "ประมวลกฎหมายอาญา": [],
+        "ประมวลกฎหมายวิธีพิจารณาความอาญา": [],
+        "ประมวลกฎหมายแพ่งและพาณิชย์": [],
+        "ประมวลกฎหมายวิธีพิจารณาความแพ่ง": [],
+	"รัฐธรรมนูญแห่งราชอาณาจักรไทย": []
+      },
+      "act": {
+        "พ.ร.บ.จัดตั้งศาลแขวงและวิธีพิจารณาความอาญาในศาลแขวง พ.ศ.๒๔๙๙": [],
+	"พ.ร.บ.คุ้มครองแรงงาน พ.ศ.๒๕๔๑": [],
+        "พ.ร.บ.แรงงานสัมพันธ์ พ.ศ.๒๕๑๘": [],
+        "พ.ร.บ.จัดตั้งศาลแรงงานและวิธีพิจารณาคดีแรงงาน พ.ศ.๒๕๒๒": [],
+        "พ.ร.บ.วิธีปฏิบัติราชการทางปกครอง พ.ศ.๒๕๓๙": [],
+        "พ.ร.บ.จัดตั้งศาลปกครองและวิธีพิจารณาคดีปกครอง พ.ศ.๒๕๔๒": [],
+        "พ.ร.บ.องค์กรอัยการและพนักงานอัยการ พ.ศ.๒๕๕๓": []
+      }
+    };
+
+    // Map lawName -> per-law results page (fallback to results.html if not listed)
+    const resultsPageMap = {
+      "ประมวลกฎหมายอาญา": "results1.html",
+      "ประมวลกฎหมายวิธีพิจารณาความอาญา": "results2.html",
+      "ประมวลกฎหมายแพ่งและพาณิชย์": "results3.html",
+      "ประมวลกฎหมายวิธีพิจารณาความแพ่ง": "results4.html",
+            "รัฐธรรมนูญแห่งราชอาณาจักรไทย": "results5.html",
+      "พ.ร.บ.จัดตั้งศาลแขวงและวิธีพิจารณาความอาญาในศาลแขวง พ.ศ.๒๔๙๙": "results6.html",
+      "พ.ร.บ.คุ้มครองแรงงาน พ.ศ.๒๕๔๑": "results7.html",
+      "พ.ร.บ.แรงงานสัมพันธ์ พ.ศ.๒๕๑๘": "results8.html",
+      "พ.ร.บ.จัดตั้งศาลแรงงานและวิธีพิจารณาคดีแรงงาน พ.ศ.๒๕๒๒": "results9.html",
+      "พ.ร.บ.วิธีปฏิบัติราชการทางปกครอง พ.ศ.๒๕๓๙": "results10.html",
+      "พ.ร.บ.จัดตั้งศาลปกครองและวิธีพิจารณาคดีปกครอง พ.ศ.๒๕๔๒": "results11.html",
+      "พ.ร.บ.องค์กรอัยการและพนักงานอัยการ พ.ศ.๒๕๕๓": "results12.html"
+    };
+    
+    // Application state variables
+    let currentLawType = 'code';
+    let currentSearchMode = 'section';
+
+    // --- Swipe functionality variables ---
+    const mainTabOrder = ['code', 'act', 'notes'];
+    let currentMainTabIndex = 0;
+    let swipeStartX = 0;
+    let swipeCurrentX = 0;
+    let isSwiping = false;
+    const swipeThreshold = 50; // Minimum distance for a swipe in pixels
+
+    function handleSwipeStart(e) {
+        // Prevent swipe on interactive elements to avoid conflicts
+        if (e.target.closest('select, button, input, .saved-note-card')) {
+            isSwiping = false;
+            return;
+        }
+        isSwiping = true;
+        swipeStartX = e.touches[0].clientX;
+        swipeCurrentX = e.touches[0].clientX; // Initialize currentX
+    }
+
+    function handleSwipeMove(e) {
+        if (!isSwiping) return;
+        swipeCurrentX = e.touches[0].clientX;
+    }
+
+    function handleSwipeEnd(e) {
+        if (!isSwiping) return;
+        isSwiping = false;
+        
+        const diffX = swipeCurrentX - swipeStartX;
+
+        if (Math.abs(diffX) > swipeThreshold) {
+            let newTabIndex = currentMainTabIndex;
+            if (diffX < 0) { // Swiped left
+                newTabIndex = Math.min(currentMainTabIndex + 1, mainTabOrder.length - 1);
+            } else { // Swiped right
+                newTabIndex = Math.max(currentMainTabIndex - 1, 0);
+            }
+            
+            if (newTabIndex !== currentMainTabIndex) {
+                const nextTabName = mainTabOrder[newTabIndex];
+                window.selectMainTab(nextTabName);
+            }
+        }
+        // Reset values
+        swipeStartX = 0;
+        swipeCurrentX = 0;
+    }
+    // --- END: Swipe functionality ---
+
+    // Function to handle main tab selection (Code, Act, Notes)
+    window.selectMainTab = function(tabName) {
+        // Update the current tab index whenever a tab is selected
+        currentMainTabIndex = mainTabOrder.indexOf(tabName);
+
+        const searchContent = document.getElementById('searchContent');
+        const savedNotesView = document.getElementById('savedNotesView');
+        const mainCodeTab = document.getElementById('mainCodeTab');
+        const mainActTab = document.getElementById('mainActTab');
+        const mainNotesTab = document.getElementById('mainNotesTab');
+
+        mainCodeTab.classList.remove('active');
+        mainActTab.classList.remove('active');
+        mainNotesTab.classList.remove('active');
+        
+        if (tabName === 'code' || tabName === 'act') {
+            searchContent.classList.remove('hidden');
+            savedNotesView.classList.add('hidden');
+            if (tabName === 'code') {
+                mainCodeTab.classList.add('active');
+                currentLawType = 'code';
+            } else {
+                mainActTab.classList.add('active');
+                currentLawType = 'act';
+            }
+            populateLawSelect();
+        } else { // notes
+            searchContent.classList.add('hidden');
+            savedNotesView.classList.remove('hidden');
+            mainNotesTab.classList.add('active');
+            loadAndDisplaySavedNotes();
+        }
+    }
+
+    // Populates the law selection dropdown based on the current law type
+    function populateLawSelect() {
+      const lawSelect = document.getElementById("lawSelect");
+      lawSelect.innerHTML = '';
+      const laws = Object.keys(lawData[currentLawType]);
+      laws.forEach(lawName => {
+        const option = document.createElement('option');
+        option.value = lawName;
+        option.textContent = lawName;
+        lawSelect.appendChild(option);
+      });
+      if (laws.length > 0) {
+        lawSelect.value = laws[0];
+      }
+    }
+
+    // Function to switch between search modes (Section vs. Keyword)
+    window.selectTab = function(mode) {
+      currentSearchMode = mode;
+      document.getElementById('sectionTab').classList.toggle('active', mode === 'section');
+      document.getElementById('keywordTab').classList.toggle('active', mode === 'keyword');
+      document.getElementById('sectionSearch').classList.toggle('hidden', mode !== 'section');
+      document.getElementById('keywordSearch').classList.toggle('hidden', mode !== 'keyword');
+    }
+
+    // Displays a custom alert modal
+    window.showCustomAlert = function(message) {
+        const alertBox = document.createElement('div');
+        alertBox.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50';
+        alertBox.innerHTML = `<div class="bg-white p-6 rounded-lg shadow-lg text-center"><p class="text-lg font-semibold mb-4">${message}</p><button class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600" onclick="this.parentNode.parentNode.remove()">ตกลง</button></div>`;
+        document.body.appendChild(alertBox);
+    }
+    
+    // Displays a custom confirmation modal
+    window.showCustomConfirm = function(message, onConfirm) {
+        const confirmBox = document.createElement('div');
+        confirmBox.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50';
+        confirmBox.innerHTML = `
+            <div class="bg-white p-6 rounded-lg shadow-lg text-center w-11/12 max-w-sm">
+                <p class="text-lg font-semibold mb-4">${message}</p>
+                <div class="flex justify-center gap-4">
+                    <button class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400" onclick="this.closest('.fixed').remove()">ยกเลิก</button>
+                    <button class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700" id="confirmDeleteBtn">ใช่, ลบ</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(confirmBox);
+
+        document.getElementById('confirmDeleteBtn').onclick = function() {
+            onConfirm();
+            confirmBox.remove();
+        };
+    }
+
+    // Initial setup on DOM content loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      registerPwa();
+      window.selectMainTab('code');
+      window.selectTab('section');
+      document.getElementById('importExcelInput').addEventListener('change', handleFileImport);
+
+      // --- Add swipe event listeners ---
+      const container = document.querySelector('.w-full');
+      container.addEventListener('touchstart', handleSwipeStart, { passive: true });
+      container.addEventListener('touchmove', handleSwipeMove, { passive: true });
+      container.addEventListener('touchend', handleSwipeEnd);
+    });
+    
+    // Generates a unique key for storing a note in localStorage
+    function getNoteStorageKey(lawType, lawName, section) {
+        return `note::${lawType}::${lawName}::${section}`;
+    }
+
+    // Parses a note key to extract law details
+    function parseNoteKey(key) {
+        const parts = key.split('::');
+        if (parts.length === 4 && parts[0] === 'note') {
+            return { lawType: parts[1], lawName: parts[2], section: parts[3] };
+        }
+        return null;
+    }
+    
+    // Loads and displays all saved notes from localStorage
+    function loadAndDisplaySavedNotes() {
+        const listContainer = document.getElementById('savedNotesList');
+        listContainer.innerHTML = '';
+        const notes = {};
+
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            const noteData = parseNoteKey(key);
+            if (noteData) {
+                if (!notes[noteData.lawName]) {
+                    notes[noteData.lawName] = [];
+                }
+                notes[noteData.lawName].push({
+                    key: key,
+                    lawType: noteData.lawType,
+                    lawName: noteData.lawName,
+                    section: noteData.section,
+                    content: localStorage.getItem(key)
+                });
+            }
+        }
+
+        if (Object.keys(notes).length === 0) {
+            listContainer.innerHTML = '<p class="text-center text-gray-500">ยังไม่มีโน้ตที่บันทึกไว้</p>';
+            return;
+        }
+
+        for (const lawName in notes) {
+            const lawGroupEl = document.createElement('div');
+            lawGroupEl.innerHTML = `<h3 class="text-lg font-bold text-gray-800 border-b-2 pb-1 mb-2">${lawName}</h3>`;
+            
+            notes[lawName].forEach(note => {
+                const noteCard = document.createElement('div');
+                noteCard.className = 'saved-note-card';
+                noteCard.innerHTML = `
+                    <button class="delete-note-btn" onclick="window.deleteNote('${note.key}')" title="ลบโน้ต">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                    </button>
+                    <div class="cursor-pointer" onclick="window.goToNoteSection('${note.lawType}', '${note.lawName}', '${note.section}')">
+                        <h4 class="font-semibold text-blue-700">${note.section}</h4>
+                        <div class="text-sm text-gray-600 mt-1">${note.content}</div>
+                    </div>
+                `;
+                lawGroupEl.appendChild(noteCard);
+            });
+            listContainer.appendChild(lawGroupEl);
+        }
+    }
+
+    // Navigates to the results page for a specific section from a note
+    window.goToNoteSection = function(lawType, lawName, section) {
+        const params = new URLSearchParams();
+        params.append('lawType', lawType);
+        params.append('lawName', lawName);
+        params.append('searchMode', 'section');
+        
+        const sectionParts = section.split(' ');
+        params.append('query', sectionParts[1]); // The number
+        if (sectionParts.length > 2) {
+            params.append('suffix', sectionParts[2]); // The suffix like 'ทวิ'
+        }
+        
+        params.append('openNote', 'true'); // Tell results page to open note panel
+        const target = resultsPageMap[lawName] || 'results.html';
+        window.location.href = `${target}?${params.toString()}`;
+    }
+
+    // Deletes a note from localStorage after confirmation
+    window.deleteNote = function(noteKey) {
+        window.showCustomConfirm('คุณแน่ใจหรือไม่ว่าต้องการลบโน้ตนี้?', () => {
+            localStorage.removeItem(noteKey);
+            loadAndDisplaySavedNotes(); // Refresh the list
+        });
+    }
+    
+    // Converts HTML to plain text
+    function htmlToText(html) {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+        return tempDiv.textContent || tempDiv.innerText || '';
+    }
+
+    // Exports all saved notes to an Excel file
+    window.exportNotesToExcel = function() {
+        const notesToExport = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            const noteData = parseNoteKey(key);
+            if (noteData) {
+                const contentHtml = localStorage.getItem(key);
+                notesToExport.push({
+                    "ชื่อกฎหมาย": noteData.lawName,
+                    "มาตรา": noteData.section,
+                    "เนื้อหาบันทึก": htmlToText(contentHtml)
+                });
+            }
+        }
+
+        if (notesToExport.length === 0) {
+            window.showCustomAlert('ไม่พบโน้ตที่บันทึกไว้สำหรับส่งออก');
+            return;
+        }
+
+        const worksheet = XLSX.utils.json_to_sheet(notesToExport);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "บันทึกโน้ต");
+        XLSX.writeFile(workbook, "บันทึกโน้ต.xlsx");
+    }
+    
+    // Triggers the file input for importing notes from Excel
+    window.importNotesFromExcel = function() {
+        document.getElementById('importExcelInput').click();
+    }
+
+    // Handles the file import process
+    function handleFileImport(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const json = XLSX.utils.sheet_to_json(worksheet);
+
+                let importedCount = 0;
+                let skippedCount = 0;
+
+                json.forEach(row => {
+                    const lawName = row['ชื่อกฎหมาย'];
+                    const section = row['มาตรา'];
+                    const content = row['เนื้อหาบันทึก'];
+
+                    if (lawName && section && content !== undefined && String(content).trim() !== '') {
+                        let lawType = lawData.code.hasOwnProperty(lawName) ? 'code' : (lawData.act.hasOwnProperty(lawName) ? 'act' : null);
+
+                        if (lawType) {
+                            const noteKey = getNoteStorageKey(lawType, lawName, section);
+                            localStorage.setItem(noteKey, content);
+                            importedCount++;
+                        } else {
+                            skippedCount++;
+                        }
+                    }
+                });
+
+                loadAndDisplaySavedNotes();
+                let alertMessage = `นำเข้าโน้ตสำเร็จ ${importedCount} รายการ`;
+                if (skippedCount > 0) {
+                    alertMessage += `\nข้ามไป ${skippedCount} รายการ เนื่องจากไม่พบชื่อกฎหมาย`;
+                }
+                window.showCustomAlert(alertMessage);
+
+            } catch (error) {
+                window.showCustomAlert('เกิดข้อผิดพลาดในการประมวลผลไฟล์ Excel โปรดตรวจสอบรูปแบบไฟล์');
+            } finally {
+                event.target.value = ''; // Reset file input
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    // Main search function - redirects to results.html
+    window.searchLaw = function() {
+      const selectedLaw = document.getElementById("lawSelect").value;
+      const params = new URLSearchParams();
+      
+      params.append('lawType', currentLawType);
+      params.append('lawName', selectedLaw);
+      params.append('searchMode', currentSearchMode);
+
+      if (currentSearchMode === 'section') {
+        const sectionNumber = document.getElementById("sectionNumberInput").value.trim();
+        const sectionSuffix = document.getElementById("sectionSuffixSelect").value;
+        if (!sectionNumber) {
+            window.showCustomAlert('กรุณากรอกเลขมาตราที่ต้องการค้นหา');
+            return;
+        }
+        params.append('query', sectionNumber);
+        if (sectionSuffix) {
+            params.append('suffix', sectionSuffix);
+        }
+      } else { // keyword search
+        const keywordInput = document.getElementById("keywordInput").value.trim();
+        if (!keywordInput) {
+            window.showCustomAlert('กรุณากรอกคำสำคัญที่ต้องการค้นหา');
+            return;
+        }
+        params.append('query', keywordInput);
+      }
+      
+      // Redirect to the results page with the search parameters
+      const target = (typeof resultsPageMap !== 'undefined' && resultsPageMap[selectedLaw]) ? resultsPageMap[selectedLaw] : 'results.html';
+      window.location.href = `${target}?${params.toString()}`;
+    }
+    </script>
+</body>
+</html>

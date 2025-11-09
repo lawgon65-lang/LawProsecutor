@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ตารางแบบค้นหาได้</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap');
+    body {
+      font-family: "Sarabun", sans-serif;
+      background-color: #e0e6eb;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: .5rem;
+    }
+    .container { width: 100%; max-width: 1000px; }
+    .nav-button {
+      background-color: transparent;
+      color: #4A5568;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease, opacity 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border: none;
+    }
+    .nav-button:hover:not(:disabled) {
+      background-color: rgba(0,0,0,0.05);
+    }
+    table { 
+      width: 100%; 
+      border-collapse: collapse; 
+      font-size: 14px; /* ปรับขนาดฟอนต์ในตาราง */
+    }
+    thead th { background: #f4f4f4; }
+    th, td { border: 1px solid #e5e7eb; padding: 10px; vertical-align: top; }
+    tr:nth-child(even) td { background: #fcfcfc; }
+    mark { padding: 0 .2em; border-radius: .2em; background: #fff3b0; }
+  </style>
+</head>
+<body>
+  <div id="resultsView" class="container bg-white rounded-xl shadow-lg p-2 sm:p-4">
+    <div class="flex items-center justify-between mb-2">
+      <h2 id="resultsTitle" class="text-lg sm:text-xl font-bold text-gray-800 text-center flex-grow px-2">
+       บัญชีแนบท้ายประมวลกฎหมายวิธีพิจารณาความอาญา <br>
+<span class="font-normal text-sm sm:text-base">ความผิดในกฎหมายลักษณะอาญา ที่มาตรา 79 อ้างถึง <br>ซึ่งราษฎรมีอำนาจจับได้โดยไม่ต้องมีหมาย</span>
+      </h2>
+      <button class="nav-button" id="searchToggleButton" title="ค้นหา">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </button>
+    </div>
+
+    <!-- ช่องค้นหาจะถูกซ่อนไว้ในตอนแรก -->
+    <div id="searchContainer" class="hidden justify-end items-center mt-2 gap-2">
+      <input type="text" id="searchInput" placeholder="พิมพ์คำค้นหา..."
+             class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+    </div>
+
+    <!-- ตาราง -->
+    <div class="mt-3 overflow-x-auto" id="tableWrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>กลุ่มฐานความผิด</th>
+            <th>มาตรา</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ประทุษร้ายต่อพระบรมราชตระกูล</td>
+            <td>มาตรา 97 และ 99</td>
+          </tr>
+          <tr>
+            <td>ขบถภายในพระราชอาณาจักร</td>
+            <td>มาตรา 101 ถึง 104</td>
+          </tr>
+          <tr>
+            <td>ขบถภายนอกพระราชอาณาจักร</td>
+            <td>มาตรา 105 ถึง 111</td>
+          </tr>
+          <tr>
+            <td>ความผิดต่อทางพระราชไมตรีกับต่างประเทศ</td>
+            <td>มาตรา 112</td>
+          </tr>
+          <tr>
+            <td>ทำอันตรายแก่ธง หรือเครื่องหมายของต่างประเทศ</td>
+            <td>มาตรา 115</td>
+          </tr>
+          <tr>
+            <td>ความผิดต่อเจ้าพนักงาน</td>
+            <td>มาตรา 119 ถึง 122 และ 127</td>
+          </tr>
+          <tr>
+            <td>หลบหนีจากที่คุมขัง</td>
+            <td>มาตรา 163 ถึง 166</td>
+          </tr>
+          <tr>
+            <td>ความผิดต่อศาสนา</td>
+            <td>มาตรา 172 ถึง 173</td>
+          </tr>
+          <tr>
+            <td>ก่อการจลาจล</td>
+            <td>มาตรา 183 และ 184</td>
+          </tr>
+          <tr>
+            <td>
+              กระทำให้เกิดภยันตรายแก่สาธารณชน /
+              กระทำให้สาธารณชนปราศจากความสะดวกในการไปมาและการส่งข่าวและของถึงกัน /
+              กระทำให้สาธารณชนปราศจากความสุขสบาย
+            </td>
+            <td>มาตรา 185 ถึง 194, 196, 197 และ 199</td>
+          </tr>
+          <tr>
+            <td>ปลอมแปลงเงินตรา</td>
+            <td>มาตรา 202 ถึง 205 และ 210</td>
+          </tr>
+          <tr>
+            <td>ข่มขืนกระทำชำเรา</td>
+            <td>มาตรา 243 ถึง 246</td>
+          </tr>
+          <tr>
+            <td>ประทุษร้ายแก่ชีวิต</td>
+            <td>มาตรา 249 และ 251</td>
+          </tr>
+          <tr>
+            <td>ประทุษร้ายแก่ร่างกาย</td>
+            <td>มาตรา 254 ถึง 257</td>
+          </tr>
+          <tr>
+            <td>ความผิดฐานกระทำให้เสื่อมเสียอิสรภาพ</td>
+            <td>มาตรา 268, 270 และ 276</td>
+          </tr>
+          <tr>
+            <td>ลักทรัพย์</td>
+            <td>มาตรา 288 ถึง 296</td>
+          </tr>
+          <tr>
+            <td>วิ่งราว ชิงทรัพย์ ปล้นทรัพย์ และโจรสลัด</td>
+            <td>มาตรา 297 ถึง 302</td>
+          </tr>
+          <tr>
+            <td>กรรโชก</td>
+            <td>มาตรา 303</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="text-gray-500 text-sm mt-3">
+      หมายเหตุ: บัญชีแนบท้าย แก้ไขเพิ่มเติมโดยพระราชบัญญัติแก้ไขเพิ่มเติมประมวลกฎหมายวิธีพิจารณาความอาญา (ฉบับที่ 6) พ.ศ.2499
+    </p>
+  </div>
+
+  <script>
+    const searchToggleButton = document.getElementById('searchToggleButton');
+    const searchContainer = document.getElementById('searchContainer');
+    const searchInput = document.getElementById('searchInput');
+
+    // สลับการแสดง/ซ่อนช่องค้นหา
+    searchToggleButton.addEventListener('click', () => {
+      searchContainer.classList.toggle('hidden');
+      if (!searchContainer.classList.contains('hidden')) {
+        searchInput.focus(); // เมื่อแสดงช่องค้นหา ให้ focus ไปที่ input
+      } else {
+        searchInput.value = ''; // เมื่อซ่อน ให้ล้างค่าในช่องค้นหา
+        filterTable(); // กรองตารางใหม่ (แสดงทั้งหมด)
+      }
+    });
+
+    // ฟังก์ชันลบ highlight เดิม
+    function clearHighlights(el) {
+      const marks = el.querySelectorAll('mark');
+      marks.forEach(m => {
+        const parent = m.parentNode;
+        parent.replaceChild(document.createTextNode(m.textContent), m);
+        parent.normalize();
+      });
+    }
+
+    // ฟังก์ชันใส่ highlight
+    function highlightMatches(cell, query) {
+      if (!query) return;
+      const walker = document.createTreeWalker(cell, NodeFilter.SHOW_TEXT, null, false);
+      const texts = [];
+      while (walker.nextNode()) texts.push(walker.currentNode);
+      texts.forEach(node => {
+        const text = node.nodeValue;
+        const idx = text.toLowerCase().indexOf(query);
+        if (idx >= 0) {
+          const before = document.createTextNode(text.slice(0, idx));
+          const match = document.createElement('mark');
+          match.textContent = text.slice(idx, idx + query.length);
+          const after = document.createTextNode(text.slice(idx + query.length));
+          const frag = document.createDocumentFragment();
+          frag.appendChild(before); frag.appendChild(match); frag.appendChild(after);
+          node.parentNode.replaceChild(frag, node);
+        }
+      });
+    }
+
+    // ฟังก์ชันกรองตาราง
+    function filterTable() {
+      const q = searchInput.value.trim().toLowerCase();
+      const table = document.querySelector('#tableWrapper table');
+      if (!table) return;
+      const tbody = table.tBodies[0];
+      const rows = Array.from(tbody.rows);
+
+      // ลบ highlight เก่า
+      rows.forEach(row => Array.from(row.cells).forEach(c => clearHighlights(c)));
+
+      let visibleCount = 0;
+      rows.forEach(row => {
+        const cellsText = Array.from(row.cells).map(c => c.innerText.toLowerCase());
+        const match = !q || cellsText.some(t => t.includes(q));
+        row.style.display = match ? '' : 'none';
+        if (match && q) Array.from(row.cells).forEach(c => highlightMatches(c, q));
+        if (match) visibleCount++;
+      });
+
+      // ถ้าไม่พบข้อมูลที่ตรงกับคำค้นหา
+      let emptyMsg = document.getElementById('noRowsMsg');
+      if (!emptyMsg) {
+        emptyMsg = document.createElement('div');
+        emptyMsg.id = 'noRowsMsg';
+        emptyMsg.className = 'text-center text-gray-500 py-4';
+        table.parentNode.appendChild(emptyMsg);
+      }
+      emptyMsg.textContent = (visibleCount === 0) ? 'ไม่พบข้อมูลที่ตรงกับคำค้นหา' : '';
+    }
+
+    // กรองแบบ real-time
+    searchInput.addEventListener('input', filterTable);
+
+    // โหลดครั้งแรกให้แสดงทุกแถว
+    document.addEventListener('DOMContentLoaded', () => filterTable());
+  </script>
+</body>
+</html>

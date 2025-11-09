@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>สารบาญ ปอ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap');
+        body {
+            font-family: "Sarabun", sans-serif;
+            background-color: #e0e6eb;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        .container { width: 100%; max-width: 900px; }
+        .icon-btn {
+            background: transparent; border: none; cursor: pointer;
+            padding: .5rem; border-radius: .5rem; transition: background .2s ease;
+        }
+        .icon-btn:hover { background: rgba(0,0,0,.06); }
+        mark { padding: 0 .2em; border-radius: .2em; background: #fff3b0; }
+        .list-item {
+            padding: 0.5rem 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container bg-white rounded-xl shadow-lg p-4" id="formattedBlock">
+    <div class="flex items-center justify-between gap-2">
+        <h1 class="text-lg sm:text-xl font-bold text-gray-800 flex-1 text-center">
+            สารบาญ
+            <p class="font-normal">ประมวลกฎหมายอาญา</p>
+        </h1>
+        
+        <!-- ปุ่มคัดลอกทั้งหมด -->
+        <button class="icon-btn" id="copyAllBtn" title="คัดลอกข้อความทั้งหมด">
+            <svg fill="#4682B4" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16 1H4C2.895 1 2 1.895 2 3v14h2V3h12V1zm3 4H8C6.895 5 6 5.895 6 7v14c0 1.105.895 2 2 2h11c1.105 0 2-.895 2-2V7c0-1.105-.895-2-2-2zm0 16H8V7h11v14z"></path>
+            </svg>
+        </button>
+        <!-- ปุ่มแว่นขยาย แสดง/ซ่อนช่องค้นหา -->
+        <button class="icon-btn" id="searchToggleBtn" title="ค้นหา">
+            <svg fill="none" height="22" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" x2="16.65" y1="21" y2="16.65"></line>
+            </svg>
+        </button>
+    </div>
+
+    <!-- ช่องค้นหา (ซ่อนเริ่มต้น) -->
+    <div class="hidden mt-3" id="searchContainer">
+        <input class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" id="searchInput" placeholder="พิมพ์คำค้นหา..." type="text"/>
+    </div>
+    
+  <!-- รายการบรรทัด -->
+<p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>ภาค ๑</strong><strong> </strong><strong>บทบัญญัติทั่วไป</strong><strong> </strong></p>
+<p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>›</strong><strong> </strong><strong>ลักษณะ ๑</strong><strong> </strong>บทบัญญัติที่ใช้แก่ความผิดทั่วไป</p>
+<p style="margin-left:0.00px;text-indent:48.00px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๑ บทนิยาม ๑</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๒ การใช้กฎหมายอาญา ๒-๑๗</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๓ โทษและวิธีการเพื่อความปลอดภัย</p>
+<p style="margin-left:48.00px;text-indent:48.00px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">ส่วนที่ ๑ โทษ ๑๘-๓๘</p>
+<p style="margin-left:48.00px;text-indent:48.00px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">ส่วนที่ ๒ วิธีการเพื่อความปลอดภัย ๓๙-๕๐</p>
+<p style="margin-left:48.00px;text-indent:48.00px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">ส่วนที่ ๓ วิธีเพิ่มโทษ ลดโทษ และการรอการลงโทษ ๕๑-๕๘</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๔ ความรับผิดในทางอาญา ๕๙-๗๙</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๕ การพยายามกระทำความผิด ๘๐-๘๒</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๖ ตัวการและผู้สนับสนุน ๘๓-๘๙</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๗ การกระทำความผิดหลายบทหรือหลายกระทง ๙๐-๙๑</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๘ การกระทำความผิดอีก ๙๒-๙๔</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๙ อายุความ ๙๕-๑๐๑</p>
+<p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>›</strong><strong> </strong><strong>ลักษณะ ๒</strong><strong> </strong>บทบัญญัติที่ใช้แก่ความผิดลหุโทษ ๑๐๒-๑๐๖</p>
+<p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>ภาค ๒ ความผิด</strong></p>
+<p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">› ลักษณะ ๑ ความผิดเกี่ยวกับความมั่นคงแห่งราชอาณาจักร</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๑ ความผิดต่อองค์พระมหากษัตริย์ฯ และผู้สำเร็จราชการแทน ๑๐๗-๑๑๒</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๒ ความผิดต่อความมั่นคงของรัฐภายในราชอาณาจักร ๑๑๓-๑๑๘</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๓ ความผิดต่อความมั่นคงของรัฐภายนอกราชอาณาจักร ๑๑๙-๑๒๙</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๔ ความผิดต่อสัมพันธไมตรีกับต่างประเทศ ๑๓๐-๑๓๕</p>
+<p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>›</strong><strong> </strong><strong>ลักษณะ ๑/๑</strong> ความผิดเกี่ยวกับการก่อการร้าย ๑๓๕/๑-๑๓๕/๔</p>
+<p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>›</strong><strong> </strong><strong>ลักษณะ ๒</strong> ความผิดเกี่ยวกับการปกครอง</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๑ ความผิดต่อเจ้าพนักงาน ๑๓๖-๑๔๖</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๒ ความผิดต่อตำแหน่งหน้าที่ราชการ ๑๔๗-๑๖๖</p>
+<p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>›</strong><strong> </strong><strong>ลักษณะ ๓</strong> ความผิดเกี่ยวกับการยุติธรรม</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๑ ความผิดต่อเจ้าพนักงานในการยุติธรรม ๑๖๗-๑๙๙</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๒ ความผิดต่อตำแหน่งหน้าที่ในการยุติธรรม ๒๐๐-๒๐๕</p>
+<p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>›</strong><strong> </strong><strong>ลักษณะ ๔</strong> ความผิดเกี่ยวกับศาสนา ๒๐๖-๒๐๘</p>
+<p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>›</strong><strong> </strong><strong>ลักษณะ ๕</strong> ความผิดเกี่ยวกับความสงบสุขของประชาชน ๒๐๙-๒๑๖</p>
+<p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>›</strong><strong> </strong><strong>ลักษณะ ๖</strong> ความผิดเกี่ยวกับการก่อให้เกิดภยันตรายต่อประชาชน ๒๑๗-๒๓๙</p>
+<p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>›</strong><strong> </strong><strong>ลักษณะ ๗</strong> ความผิดเกี่ยวกับการปลอมและการแปลง</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๑ ความผิดเกี่ยวกับเงินตรา ๒๔๐-๒๔๙</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๒ ความผิดเกี่ยวกับดวงตรา แสตมป์และตั๋ว ๒๕๐-๒๖๓</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๓ ความผิดเกี่ยวกับเอกสาร ๒๖๔-๒๖๙</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๔ ความผิดเกี่ยวกับบัตรอิเล็กทรอนิกส์ ๒๖๙/๑-๒๖๙/๗ </p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๕ ความผิดเกี่ยวกับหนังสือเดินทาง ๒๖๙/๘-๒๖๙/๑๕</p>
+<p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>›</strong><strong> </strong><strong>ลักษณะ ๘</strong> ความผิดเกี่ยวกับการค้า ๒๗๐-๒๗๕</p>
+<p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>›</strong><strong> </strong><strong>ลักษณะ ๙</strong> ความผิดเกี่ยวกับเพศ ๒๗๖-๒๘๗</p>
+<p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>›</strong><strong> </strong><strong>ลักษณะ ๑๐</strong> ความผิดเกี่ยวกับชีวิตและร่างกาย</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๑ ความผิดต่อชีวิต ๒๘๘-๒๙๔</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๒ ความผิดต่อร่างกาย ๒๙๕-๓๐๐</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๓ ความผิดฐานทำให้แท้งลูก ๓๐๑-๓๐๕</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๔ ความผิดฐานทอดทิ้งเด็ก คนป่วยเจ็บหรือคนชรา ๓๐๖-๓๐๘</p>
+<p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>›</strong><strong> </strong><strong>ลักษณะ ๑๑</strong> ความผิดเกี่ยวกับเสรีภาพและชื่อเสียง</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๑ ความผิดต่อเสรีภาพ ๓๐๙-๓๒๑</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๒ ความผิดฐานเปิดเผยความลับ ๓๒๒-๓๒๕</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๓ ความผิดฐานหมิ่นประมาท ๓๒๖-๓๓๓</p>
+<p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>›</strong><strong> </strong><strong>ลักษณะ ๑๒</strong> ความผิดเกี่ยวกับทรัพย์</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๑ ความผิดฐานลักทรัพย์และวิ่งราวทรัพย์ ๓๓๔-๓๓๖</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๒ ความผิดฐานกรรโชก รีดเอาทรัพย์ ชิงทรัพย์</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">และปล้นทรัพย์ ๓๓๗-๓๔๐</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๓ ความผิดฐานฉ้อโกง ๓๔๑-๓๔๘</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๔ ความผิดฐานโกงเจ้าหนี้ ๓๔๙-๓๕๑</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๕ ความผิดฐานยักยอก ๓๕๒-๓๕๖</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๖ ความผิดฐานรับของโจร ๓๕๗</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๗ ความผิดฐานทำให้เสียทรัพย์ ๓๕๘-๓๖๑</p>
+<p style="margin-left:0.00px;text-indent:47.27px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๘ ความผิดฐานบุกรุก ๓๖๒-๓๖๖</p>
+<p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>›</strong><strong> </strong><strong>ลักษณะ ๑๓</strong> ความผิดเกี่ยวกับศพ ๓๖๖/๑-๓๖๖/๔</p>
+<p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>ภาค ๓ ลหุโทษ</strong> ๓๖๗-๓๙๘</p>
+<p style="margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap">​</p>
+
+    <div class="hidden text-center text-gray-500 py-4" id="noResults">ไม่พบข้อมูลที่ตรงกับคำค้นหา</div>
+</div>
+
+<script>
+    const searchToggleBtn = document.getElementById('searchToggleBtn');
+    const searchContainer = document.getElementById('searchContainer');
+    const searchInput = document.getElementById('searchInput');
+    const formattedBlock = document.getElementById('formattedBlock');
+    const noResults = document.getElementById('noResults');
+    const copyAllBtn = document.getElementById('copyAllBtn');
+    
+    // ฟังก์ชันสำหรับค้นหาและไฮไลต์
+    function filterAndHighlight() {
+        const query = searchInput.value.trim().toLowerCase();
+        const listItems = Array.from(formattedBlock.querySelectorAll('p'));
+        let visibleCount = 0;
+
+        listItems.forEach(item => {
+            const originalText = item.textContent;
+            const itemText = originalText.toLowerCase();
+
+            // ลบไฮไลต์เดิมออก
+            item.innerHTML = originalText;
+
+            // ตรวจสอบว่าตรงกับคำค้นหาหรือไม่
+            if (query === '' || itemText.includes(query)) {
+                item.style.display = '';
+                visibleCount++;
+
+                // ถ้าตรงกัน ให้ไฮไลต์ข้อความ
+                if (query !== '') {
+                    const regex = new RegExp(`(${query})`, 'gi');
+                    item.innerHTML = originalText.replace(regex, '<mark>$1</mark>');
+                }
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        // แสดงข้อความ "ไม่พบข้อมูล" ถ้าไม่มีผลลัพธ์
+        noResults.classList.toggle('hidden', visibleCount > 0);
+    }
+
+    // Toggle ช่องค้นหา
+    searchToggleBtn.addEventListener('click', () => {
+        searchContainer.classList.toggle('hidden');
+        if (!searchContainer.classList.contains('hidden')) {
+            searchInput.focus();
+        } else {
+            searchInput.value = '';
+            filterAndHighlight();
+        }
+    });
+
+    // คัดลอกทั้งหมด
+    function showAlert(msg) {
+        const box = document.createElement('div');
+        box.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4';
+        box.innerHTML = `<div class="bg-white p-6 rounded-lg shadow-lg text-center w-full max-w-sm">
+            <p class="text-lg font-semibold mb-4">${msg}</p>
+            <button class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                    onclick="this.closest('.fixed').remove()">ตกลง</button>
+        </div>`;
+        document.body.appendChild(box);
+    }
+
+    function getAllText() {
+        return formattedBlock.innerText.trim();
+    }
+
+    function copyAll() {
+        const text = getAllText();
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showAlert('คัดลอกข้อความทั้งหมดแล้ว!');
+    }
+    
+    copyAllBtn.addEventListener('click', copyAll);
+    searchInput.addEventListener('input', filterAndHighlight);
+</script>
+
+</body>
+</html>

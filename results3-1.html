@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>สารบาญ ปพพ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap');
+        body {
+            font-family: "Sarabun", sans-serif;
+            background-color: #e0e6eb;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        .container { width: 100%; max-width: 900px; }
+        .icon-btn {
+            background: transparent; border: none; cursor: pointer;
+            padding: .5rem; border-radius: .5rem; transition: background .2s ease;
+        }
+        .icon-btn:hover { background: rgba(0,0,0,.06); }
+        mark { padding: 0 .2em; border-radius: .2em; background: #fff3b0; }
+        .list-item {
+            padding: 0.5rem 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container bg-white rounded-xl shadow-lg p-4" id="formattedBlock">
+    <div class="flex items-center justify-between gap-2">
+        <h1 class="text-lg sm:text-xl font-bold text-gray-800 flex-1 text-center">
+            สารบาญ
+            <p class="font-normal">ประมวลกฎหมายแพ่งและพาณิชย์</p>
+        </h1>
+        
+        <!-- ปุ่มคัดลอกทั้งหมด -->
+        <button class="icon-btn" id="copyAllBtn" title="คัดลอกข้อความทั้งหมด">
+            <svg fill="#4682B4" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16 1H4C2.895 1 2 1.895 2 3v14h2V3h12V1zm3 4H8C6.895 5 6 5.895 6 7v14c0 1.105.895 2 2 2h11c1.105 0 2-.895 2-2V7c0-1.105-.895-2-2-2zm0 16H8V7h11v14z"></path>
+            </svg>
+        </button>
+        <!-- ปุ่มแว่นขยาย แสดง/ซ่อนช่องค้นหา -->
+        <button class="icon-btn" id="searchToggleBtn" title="ค้นหา">
+            <svg fill="none" height="22" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" x2="16.65" y1="21" y2="16.65"></line>
+            </svg>
+        </button>
+    </div>
+
+    <!-- ช่องค้นหา (ซ่อนเริ่มต้น) -->
+    <div class="hidden mt-3" id="searchContainer">
+        <input class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" id="searchInput" placeholder="พิมพ์คำค้นหา..." type="text"/>
+    </div>
+    
+  <!-- รายการบรรทัด -->
+<p style="margin-top:4px;margin-bottom:4px;white-space:pre-wrap"><strong>บรรพ</strong><strong> </strong><strong>๑</strong><strong> </strong><strong>หลักทั่วไป</strong><strong><br></strong><strong>ข้อความเบื้องต้น</strong>   ๑-๓<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๑</strong> บทเบ็ดเสร็จทั่วไป  ๔-๑๔<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๒</strong> บุคคล<br>&nbsp; &nbsp; &nbsp;หมวด๑ บุคคลธรรมดา<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ส่วนที่๑ สภาพบุคคล  ๑๕-๑๘<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ส่วนที่๒ ความสามารถ  ๑๙-๓๖<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ส่วนที่๓ ภูมิลำเนา  ๓๗-๔๗<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ส่วนที่๔ สาบสูญ  ๔๘-๖๔<br>&nbsp; &nbsp; &nbsp;หมวด๒ นิติบุคคล<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ส่วนที่๑ บทเบ็ดเสร็จทั่วไป  ๖๕-๗๗<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ส่วนที่๒ สมาคม  ๗๘-๑๐๙<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ส่วนที่๓ มูลนิธิ  ๑๑๐-๑๓๖<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๓</strong> ทรัพย์  ๑๓๗-๑๔๘<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๔</strong> นิติกรรม<br>      หมวด๑ บทเบ็ดเสร็จทั่วไป  ๑๔๙-๑๕๓<br>&nbsp; &nbsp;  &nbsp;หมวด๒ การแสดงเจตนา  ๑๕๔-๑๗๑<br>&nbsp; &nbsp; &nbsp; หมวด๓ โมฆะกรรมและโมฆียะ  ๑๗๒-๑๘๑<br>&nbsp; &nbsp; &nbsp; หมวด๔ เงื่อนไขและเงื่อนเวลา  ๑๘๒-๑๙๓<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๕</strong> ระยะเวลา  ๑๙๓/๑-๑๙๓/๘<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๖</strong> อายุความ<br>&nbsp; &nbsp;  &nbsp;หมวด๑ บทเบ็ดเสร็จทั่วไป  ๑๙๓/๙-๑๙๓/๒๙<br>&nbsp; &nbsp; &nbsp; หมวด๒ กำหนดอายุความ  ๑๙๓/๓๐-๑๙๓/๓๕</p><p style="margin-top:4px;margin-bottom:4px;white-space:pre-wrap"><strong>บรรพ</strong><strong>๒</strong><strong> </strong><strong>หนี้</strong><br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๑</strong> บทเบ็ดเสร็จทั่วไป<br>&nbsp; &nbsp; &nbsp; หมวด๑ วัตถุแห่งหนี้  ๑๙๔-๒๐๒<br>&nbsp; &nbsp; &nbsp; หมวด๒ ผลแห่งหนี้<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๑ การไม่ชำระหนี้  ๒๐๓-๒๒๕<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๒ รับช่วงสิทธิ  ๒๒๖-๒๓๒<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๓ การใช้สิทธิเรียกร้องของลูกหนี้   ๒๓๓-๒๓๖<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๔ เพิกถอนการฉ้อฉล  ๒๓๗-๒๔๐<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๕ สิทธิยึดหน่วง  ๒๔๑-๒๕๐</p><p style="margin-top:4px;margin-bottom:4px;white-space:pre-wrap">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๖ บุริมสิทธิ  ๒๕๑-๒๕๒<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;๑. บุริมสิทธิสามัญ  ๒๕๓-๒๕๘<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;๒. บุริมสิทธิพิเศษ<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;     (ก) บุริมสิทธิเหนือสังหาริมทรัพย์   ๒๕๙-๒๗๒<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;     &nbsp;(ข) บุริมสิทธิเหนืออสังหาริมทรัพย์   ๒๗๓-๒๗๖<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;๓. ลำดับแห่งบุริมสิทธิ  ๒๗๗-๒๘๐<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;๔. ผลแห่งบุริมสิทธิ  ๒๘๑-๒๘๙<br>&nbsp; &nbsp; &nbsp; หมวด๓ ลูกหนี้และเจ้าหนี้หลายคน  ๒๙๐-๓๐๒<br>&nbsp; &nbsp; &nbsp; หมวด๔ โอนสิทธิเรียกร้อง  ๓๐๓-๓๑๓<br>&nbsp; &nbsp; &nbsp; หมวด๕ ความระงับหนี้<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๑ การชำระหนี้  ๓๑๔-๓๓๙<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๒ ปลดหนี้  ๓๔๐<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๓ หักกลบลบหนี้  ๓๔๑-๓๔๘<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๔ แปลงหนี้ใหม่  ๓๔๙-๓๕๒<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๕ หนี้เกลื่อนกลืนกัน  ๓๕๓<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๒</strong> สัญญา<br>&nbsp; &nbsp; &nbsp;› หมวด๑ ก่อให้เกิดสัญญา  ๓๕๔-๓๖๘<br>&nbsp; &nbsp; &nbsp;› หมวด๒ ผลแห่งสัญญา  ๓๖๙-๓๗๖<br>&nbsp; &nbsp; &nbsp;› หมวด๓ มัดจำและกำหนดเบี้ยปรับ  ๓๗๗-๓๘๕<br>&nbsp; &nbsp; &nbsp;› หมวด๔ เลิกสัญญา  ๓๘๖-๓๙๔<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๓</strong> จัดการงานนอกสั่ง  ๓๙๕-๔๐๕<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๔</strong> ลาภมิควรได้  ๔๐๖-๔๑๙<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๕</strong> ละเมิด<br>&nbsp; &nbsp; &nbsp; หมวด๑ ความรับผิดเพื่อละเมิด  ๔๒๐-๔๓๗<br>&nbsp; &nbsp; &nbsp; หมวด๒ ค่าสินไหมทดแทนเพื่อละเมิด   ๔๓๘-๔๔๘<br>&nbsp; &nbsp; &nbsp; หมวด๓ นิรโทษกรรม  ๔๔๙-๔๕๒</p><p style="margin-top:4px;margin-bottom:4px;white-space:pre-wrap"><strong>บรรพ</strong><strong>๓</strong><strong> </strong><strong>เอกเทศสัญญา</strong><br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๑</strong> ซื้อขาย<br>&nbsp; &nbsp; &nbsp; หมวด๑ สภาพและหลักสำคัญของสัญญาซื้อขาย<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๑ บทเบ็ดเสร็จทั่วไป  ๔๕๓-๔๕๗<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;   ส่วนที่๒ การโอนกรรมสิทธิ์  ๔๕๘-๔๖๐<br>&nbsp; &nbsp; &nbsp; หมวด๒ หน้าที่และความรับผิดของผู้ขาย<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๑ การส่งมอบ  ๔๖๑-๔๗๑<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๒ ความรับผิดชอบเพื่อชำรุดบกพร่อง   ๔๗๒-๔๗๔<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๓ ความรับผิดในการรอนสิทธิ  ๔๗๕-๔๘๒<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๔ ข้อสัญญาว่าจะไม่ต้องรับผิด   ๔๘๓-๔๘๕<br>&nbsp; &nbsp; &nbsp; หมวด๓ หน้าที่ของผู้ซื้อ  ๔๘๖-๔๙๐<br>&nbsp; &nbsp; &nbsp; หมวด๔ การซื้อขายเฉพาะบางอย่าง<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๑ ขายฝาก  ๔๙๑-๕๐๒<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๒ ขายตามตัวอย่าง ขายตามคำพรรณนา ขายเผื่อชอบ   ๕๐๓-๕๐๘<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๓ ขายทอดตลาด  ๕๐๙-๕๑๗<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๒</strong> แลกเปลี่ยน  ๕๑๘-๕๒๐<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๓</strong> ให้   ๕๒๑-๕๓๖<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๔</strong> เช่าทรัพย์<br>&nbsp; &nbsp; &nbsp; หมวด๑ บทเบ็ดเสร็จทั่วไป  ๕๓๗-๕๔๕<br>&nbsp; &nbsp; &nbsp; หมวด๒ หน้าที่และความรับผิดชอบ ของผู้ให้เช่า   ๕๔๖-๕๕๑<br>&nbsp; &nbsp; &nbsp; หมวด๓ หน้าที่และความรับผิดของผู้เช่า   ๕๕๒-๕๖๓<br>&nbsp; &nbsp; &nbsp; หมวด๔ ความระงับแห่งสัญญาเช่า  ๕๖๔-๕๗๑<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๕</strong> เช่าซื้อ  ๕๗๒-๕๗๔<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๖</strong> จ้างแรงงาน  ๕๗๕-๕๘๖<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๗</strong> จ้างทำของ  ๕๘๗-๖๐๗<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๘</strong> รับขน  ๖๐๘-๖๐๙<br>&nbsp; &nbsp; &nbsp; หมวด๑ รับขนของ  ๖๑๐-๖๓๓<br>&nbsp; &nbsp; &nbsp; หมวด๒ รับขนคนโดยสาร  ๖๓๔-๖๓๙<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๙</strong> ยืม<br>&nbsp; &nbsp; &nbsp; หมวด๑ ยืมใช้คงรูป  ๖๔๐-๖๔๙<br>&nbsp; &nbsp; &nbsp; หมวด๒ ยืมใช้สิ้นเปลือง  ๖๕๐-๖๕๖<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๑๐</strong> ฝากทรัพย์<br>&nbsp; &nbsp; &nbsp; หมวด๑ บทเบ็ดเสร็จทั่วไป  ๖๕๗-๖๗๑<br>&nbsp; &nbsp; &nbsp; หมวด๒ วิธีเฉพาะการฝากเงิน  ๖๗๒-๖๗๓<br>&nbsp; &nbsp; &nbsp; หมวด๓ วิธีเฉพาะสำหรับเจ้าสำนักโรงแรม   ๖๗๔-๖๗๙<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๑๑</strong> ค้ำประกัน<br>&nbsp; &nbsp; &nbsp; หมวด๑ บทเบ็ดเสร็จทั่วไป  ๖๘๐-๖๘๕<br>&nbsp; &nbsp; &nbsp; หมวด๒ ผลก่อนชำระหนี้  ๖๘๖-๖๙๒<br>&nbsp; &nbsp; &nbsp; หมวด๓ ผลภายหลังชำระหนี้  ๖๙๓-๖๙๗<br>&nbsp; &nbsp; &nbsp; หมวด๔ ความระงับสิ้นไปแห่งการค้ำประกัน   ๖๙๘-๗๐๑<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๑๒</strong> จำนอง<br>&nbsp; &nbsp; &nbsp; หมวด๑ บทเบ็ดเสร็จทั่วไป  ๗๐๒-๗๑๔<br>&nbsp; &nbsp; &nbsp; หมวด๒ สิทธิจำนองครอบเพียงใด  ๗๑๕-๗๒๑<br>&nbsp; &nbsp; &nbsp; หมวด๓ สิทธิและหน้าที่ของผู้รับจำนองและผู้จำนอง   ๗๒๒-๗๒๗<br>&nbsp; &nbsp; &nbsp; หมวด๔ การบังคับจำนอง  ๗๒๘-๗๓๕<br>&nbsp; &nbsp; &nbsp; หมวด๕ สิทธิและหน้าที่ของผู้รับโอนทรัพย์สินซึ่งจำนอง   ๗๓๖-๗๔๓<br>&nbsp; &nbsp; › หมวด๖ ความระงับสิ้นไปแห่งสัญญาจำนอง   ๗๔๔-๗๔๖<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๑๓</strong> จำนำ<br>&nbsp; &nbsp; &nbsp; หมวด๑ บทเบ็ดเสร็จทั่วไป  ๗๔๗-๗๕๗<br>&nbsp; &nbsp; &nbsp; หมวด๒ สิทธิและหน้าที่ของผู้จำนำและผู้รับจำนำ   ๗๕๘-๗๖๓<br>&nbsp; &nbsp; &nbsp; หมวด๓ การบังคับจำนำ  ๗๖๔-๗๖๘<br>&nbsp; &nbsp; &nbsp; หมวด๔ ความระงับสิ้นไปแห่งการจำนำ  ๗๖๙<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๑๔</strong> เก็บของในคลังสินค้า<br>&nbsp; &nbsp; &nbsp; หมวด๑ บทเบ็ดเสร็จทั่วไป  ๗๗๐-๗๗๔<br>&nbsp; &nbsp; &nbsp; หมวด๒ ใบรับของคลังสินค้าและประทวนสินค้า   ๗๗๕-๗๙๖<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๑๕</strong> ตัวแทน<br>&nbsp; &nbsp; &nbsp; หมวด๑ บทเบ็ดเสร็จทั่วไป  ๗๙๗-๘๐๖<br>&nbsp; &nbsp; &nbsp; หมวด๒ หน้าที่และความรับผิดของตัวแทนต่อตัวการ   ๘๐๗-๘๑๔<br>&nbsp; &nbsp; &nbsp; หมวด๓ หน้าที่และความรับผิดของตัวการต่อตัวแทน   ๘๑๕-๘๑๙<br>&nbsp; &nbsp;   หมวด๔ ความรับผิดของตัวการและตัวแทนต่อบุคคล ภายนอก   ๘๒๐-๘๒๕<br>&nbsp; &nbsp; &nbsp; หมวด๕ ความระงับสิ้นไปแห่งสัญญาตัวแทน   ๘๒๖-๘๓๒<br>&nbsp; &nbsp; &nbsp; หมวด๖ ตัวแทนค้าต่าง  ๘๓๓-๘๔๔<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๑๖</strong> นายหน้า  ๘๔๕-๘๔๙<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๑๗</strong> ประนีประนอมยอมความ  ๘๕๐-๘๕๒<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๑๘</strong> การพนันและขันต่อ  ๘๕๓-๘๕๕<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๑๙</strong> บัญชีเดินสะพัด  ๘๕๖-๘๖๐<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๒๐</strong> ประกันภัย<br>&nbsp; &nbsp; &nbsp; หมวด๑ บทเบ็ดเสร็จทั่วไป  ๘๖๑-๘๖๘<br>&nbsp; &nbsp; &nbsp; หมวด๒ ประกันวินาศภัย<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๑ บทเบ็ดเสร็จทั่วไป  ๘๖๙-๘๘๒<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๒ วิธีเฉพาะการประกันภัยในการรับขน   ๘๘๓-๘๘๖<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๓ ประกันภัยค้ำจุน  ๘๘๗-๘๘๘<br>&nbsp; &nbsp; &nbsp; หมวด๓ ประกันชีวิต  ๘๘๙-๘๙๗<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๒๑</strong> ตั๋วเงิน<br>&nbsp; &nbsp; &nbsp; หมวด๑ บทเบ็ดเสร็จทั่วไป  ๘๙๘-๙๐๗<br>&nbsp; &nbsp; &nbsp; หมวด๒ ตั๋วแลกเงิน<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๑ การออกและสลักหลังตั๋วแลกเงิน   ๙๐๘-๙๒๖<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๒ การรับรอง  ๙๒๗-๙๓๗<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;   ส่วนที่๓ อาวัล  ๙๓๘-๙๔๐<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๔ การใช้เงิน  ๙๔๑-๙๔๙<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;   ส่วนที่๕ การสอดเข้าแก้หน้า  ๙๕๐<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;(๑) การรับรองเพื่อแก้หน้า  ๙๕๑-๙๕๓<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;(๒) การใช้เงินเพื่อแก้หน้า  ๙๕๔-๙๕๘<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๖ สิทธิไล่เบี้ยเพราะเขาไม่รับรองหรือไม่ใช้เงิน   ๙๕๙-๙๗๔<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;   ส่วนที่๗ ตั๋วแลกเงินเป็นสำรับ  ๙๗๕-๙๘๑<br>&nbsp; &nbsp; &nbsp; หมวด๓ ตั๋วสัญญาใช้เงิน  ๙๘๒-๙๘๖<br>&nbsp; &nbsp; &nbsp; หมวด๔ เช็ค  ๙๘๗-๑๐๐๐<br>&nbsp; &nbsp; &nbsp; หมวด๕ อายุความ  ๑๐๐๑-๑๐๐๕<br>&nbsp; &nbsp; &nbsp; หมวด๖ ตั๋วเงินปลอม ตั๋วเงินถูกลัก และตั๋วเงินหาย   ๑๐๐๖-๑๐๑๑<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๒๒</strong> หุ้นส่วนและบริษัท<br>&nbsp; &nbsp; &nbsp; หมวด๑ บทเบ็ดเสร็จทั่วไป  ๑๐๑๒-๑๐๒๔<br>&nbsp; &nbsp; &nbsp; หมวด๒ ห้างหุ้นส่วนสามัญ<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๑ บทวิเคราะห์  ๑๐๒๕<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๒ ความเกี่ยวพันระหว่างผู้เป็นหุ้น ส่วน ด้วยกันเอง   ๑๐๒๖-๑๐๔๘<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๓ ความเกี่ยวพันระหว่างผู้เป็นหุ้น ส่วน กับบุคคลภายนอก   ๑๐๔๙-๑๐๕๔<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๔ การเลิกและชำระบัญชีห้างหุ้น ส่วนสามัญ   ๑๐๕๕-๑๐๖๓<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๕ การจดทะเบียนห้างหุ้น ส่วนสามัญ   ๑๐๖๔-๑๐๗๒<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๖ การควบห้างหุ้น ส่วนจดทะเบียนเข้ากัน   ๑๐๗๓-๑๐๗๖<br>&nbsp; &nbsp; &nbsp; หมวด๓ ห้างหุ้น ส่วนจำกัด   ๑๐๗๗-๑๐๙๕<br>&nbsp; &nbsp; &nbsp; หมวด๔ บริษัทจำกัด<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๑ สภาพและการตั้งบริษัทจำกัด   ๑๐๙๖-๑๑๑๖<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๒ หุ้นและผู้ถือหุ้น  ๑๑๑๗-๑๑๔๓<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๓ วิธีจัดการบริษัทจำกัด<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;๑. บทเบ็ดเสร็จทั่วไป  ๑๑๔๔-๑๑๔๙<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;๒. กรรมการ  ๑๑๕๐-๑๑๗๐<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;๓. ประชุมใหญ่  ๑๑๗๑-๑๑๙๕<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;๔. บัญชีงบดุล  ๑๑๙๖-๑๑๙๙<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;๕. เงินปันผลและเงินสำรอง  ๑๒๐๐-๑๒๐๕<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;๖. สมุดและบัญชี  ๑๒๐๖-๑๒๐๗<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๔ การสอบบัญชี  ๑๒๐๘-๑๒๑๔<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๕ การตรวจ  ๑๒๑๕-๑๒๑๙<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๖ การเพิ่มทุนและลดทุน  ๑๒๒๐-๑๒๒๘<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๗ หุ้นกู้  ๑๒๒๙-๑๒๓๕<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๘ เลิกบริษัทจำกัด  ๑๒๓๖-๑๒๓๗<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๙ การควบบริษัทจำกัดเข้ากัน   ๑๒๓๘-๑๒๔๓<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๑๐ หนังสือบอกกล่าว  ๑๒๔๔-๑๒๔๕<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๑๑ การถอนทะเบียนบริษัทร้าง  ๑๒๔๖<br>&nbsp; &nbsp;   หมวด๕ การชำระบัญชีห้างหุ้น ส่วน จดทะเบียน ห้างหุ้น ส่วนจำกัด และบริษัทจำกัด   ๑๒๔๗-๑๒๗๓<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๒๓</strong> สมาคม  ๑๒๗๔-๑๒๙๗</p><p style="margin-top:4px;margin-bottom:4px;white-space:pre-wrap"><strong>บรรพ</strong><strong>๔</strong><strong> </strong><strong>ทรัพย์สิน</strong><br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๑</strong> บทเบ็ดเสร็จทั่วไป  ๑๒๙๘-๑๓๐๗<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๒</strong> กรรมสิทธิ์<br>&nbsp; &nbsp; &nbsp; หมวด๑ การได้มาซึ่งกรรมสิทธิ์  ๑๓๐๘-๑๓๓๔<br>&nbsp; &nbsp; &nbsp; หมวด๒ แดนแห่งกรรมสิทธิ์ และการใช้กรรมสิทธิ์   ๑๓๓๕-๑๓๕๕<br>&nbsp; &nbsp; &nbsp; หมวด๓ กรรมสิทธิ์รวม  ๑๓๕๖-๑๓๖๖<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๓</strong> ครอบครอง  ๑๓๖๗-๑๓๘๖<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๔</strong> ภารจำยอม  ๑๓๘๗-๑๔๐๑<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๕</strong> อาศัย  ๑๔๐๒-๑๔๐๙<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๖</strong> สิทธิเหนือพื้นดิน  ๑๔๑๐-๑๔๑๖<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๗</strong> สิทธิเก็บกิน  ๑๔๑๗-๑๔๒๘<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๘</strong> ภารติดพันในอสังหาริมทรัพย์   ๑๔๒๙-๑๔๓๔</p><p style="margin-top:4px;margin-bottom:4px;white-space:pre-wrap"><strong>บรรพ</strong><strong>๕</strong><strong> </strong><strong>ครอบครัว</strong><br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๑</strong> การสมรส<br>&nbsp; &nbsp; &nbsp; หมวด๑ การหมั้น  ๑๔๓๕-๑๔๔๗/๒<br>&nbsp; &nbsp; &nbsp; หมวด๒ เงื่อนไขแห่งการสมรส  ๑๔๔๘-๑๔๖๐<br>&nbsp; &nbsp; &nbsp; หมวด๓ ความสัมพันธ์ระหว่างสามีภริยา   ๑๔๖๑-๑๔๖๔/๑<br>&nbsp; &nbsp; &nbsp; หมวด๔ ทรัพย์สินระหว่างสามีภริยา   ๑๔๖๕-๑๔๙๓<br>&nbsp; &nbsp; &nbsp; หมวด๕ ความเป็นโมฆะของการสมรส  ๑๔๙๔-๑๕๐๐<br>&nbsp; &nbsp; &nbsp; หมวด๖ การสิ้นสุดแห่งการสมรส  ๑๕๐๑-๑๕๓๕<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๒</strong> บิดามารดากับบุตร<br>&nbsp; &nbsp; &nbsp; หมวด๑ บิดามารดา  ๑๕๓๖-๑๕๖๐<br>&nbsp; &nbsp; &nbsp; หมวด๒ สิทธิและหน้าที่ของบิดามารดาและบุตร   ๑๕๖๑-๑๕๘๔/๑<br>&nbsp; &nbsp; &nbsp; หมวด๓ ความปกครอง  ๑๕๘๕-๑๕๙๘/๑๘<br>&nbsp; &nbsp; &nbsp; หมวด๔ บุตรบุญธรรม  ๑๕๙๘/๑๙-๑๕๙๘/๓๗<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๓</strong> ค่าอุปการะเลี้ยงดู   ๑๕๙๘/๓๘-๑๕๙๘/๔๑</p><p style="margin-top:4px;margin-bottom:4px;white-space:pre-wrap"><strong>บรรพ</strong><strong>๖</strong><strong> </strong><strong>มรดก</strong><br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๑</strong> บทเบ็ดเสร็จทั่วไป<br>&nbsp; &nbsp; &nbsp; หมวด๑ การตกทอดแห่งทรัพย์มรดก  ๑๕๙๙-๑๖๐๓<br>&nbsp; &nbsp; &nbsp; หมวด๒ การเป็นทายาท&nbsp;  ๑๖๐๔-๑๖๐๗<br>&nbsp; &nbsp; &nbsp; หมวด๓ การตัดมิให้รับมรดก  ๑๖๐๘-๑๖๐๙<br>&nbsp; &nbsp; &nbsp; หมวด๔ การสละมรดกและอื่น ๆ   ๑๖๑๐-๑๖๑๙<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๒</strong> สิทธิโดยธรรมในการรับมรดก<br>&nbsp; &nbsp; &nbsp; หมวด๑ บทเบ็ดเสร็จทั่วไป  ๑๖๒๐-๑๖๒๘<br>&nbsp; &nbsp; &nbsp; หมวด๒ การแบ่งทรัพย์มรดกระหว่างทายาทโดยธรรม ในลำดับและชั้นต่าง ๆ   ๑๖๒๙-๑๖๓๑<br>&nbsp; &nbsp; &nbsp; หมวด๓ การแบ่ง ส่วนมรดกของทายาทโดยธรรม ในลำดับและชั้นต่าง ๆ<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๑ ญาติ  ๑๖๓๒-๑๖๓๔<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ส่วนที่๒ คู่สมรส  ๑๖๓๕-๑๖๓๘<br>&nbsp; &nbsp; &nbsp; หมวด๔ การรับมรดกแทนที่กัน  ๑๖๓๙-๑๖๔๕<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๓</strong> พินัยกรรม<br>&nbsp; &nbsp; &nbsp; หมวด๑ บทเบ็ดเสร็จทั่วไป  ๑๖๔๖-๑๖๕๔<br>&nbsp; &nbsp; &nbsp; หมวด๒ แบบพินัยกรรม  ๑๖๕๕-๑๖๗๒<br>&nbsp; &nbsp; &nbsp; หมวด๓ ผลและการตีความแห่งพินัยกรรม   ๑๖๗๓-๑๖๘๕<br>&nbsp; &nbsp; &nbsp; หมวด๔ พินัยกรรมที่ตั้งผู้ปกครองทรัพย์   ๑๖๘๖-๑๖๙๒<br>&nbsp; &nbsp; &nbsp; หมวด๕ การเพิกถอนและการตกไปแห่งพินัยกรรม หรือข้อกำหนดพินัยกรรม   ๑๖๙๓-๑๖๙๙<br>&nbsp; &nbsp; &nbsp; หมวด๖ ความเสียเปล่าแห่งพินัยกรรม หรือข้อกำหนดพินัยกรรม   ๑๗๐๐-๑๗๑๐<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๔</strong> วิธีจัดการและปันทรัพย์มรดก<br>&nbsp; &nbsp; &nbsp; หมวด๑ ผู้จัดการมรดก  ๑๗๑๑-๑๗๓๓<br>&nbsp; &nbsp; &nbsp; หมวด๒ การรวบรวมจำหน่ายทรัพย์มรดกเป็นตัวเงิน และการชำระหนี้กับแบ่งปัน ๑๗๓๔-๑๗๔๔<br>&nbsp; &nbsp; &nbsp; หมวด๓ การแบ่งมรดก  ๑๗๔๕-๑๗๕๒<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๕</strong> มรดกที่ไม่มีผู้รับ  ๑๗๕๓<br><strong>›</strong><strong> </strong><strong>ลักษณะ</strong><strong>๖</strong> อายุความ  ๑๗๕๔-๑๗๕๕</p><p style="margin-top:4px;margin-bottom:4px;white-space:pre-wrap">​</p>
+    <div class="hidden text-center text-gray-500 py-4" id="noResults">ไม่พบข้อมูลที่ตรงกับคำค้นหา</div>
+</div>
+
+
+<script>
+    const searchToggleBtn = document.getElementById('searchToggleBtn');
+    const searchContainer = document.getElementById('searchContainer');
+    const searchInput = document.getElementById('searchInput');
+    const formattedBlock = document.getElementById('formattedBlock');
+    const noResults = document.getElementById('noResults');
+    const copyAllBtn = document.getElementById('copyAllBtn');
+
+    // ดึงทุก p ภายใน formattedBlock และเก็บ HTML เดิมไว้
+    const listItems = Array.from(formattedBlock.querySelectorAll('p'));
+    listItems.forEach(item => {
+        item.dataset.original = item.innerHTML;
+    });
+
+    // ฟังก์ชันค้นหาและไฮไลต์ โดยไม่ทำลาย HTML เดิม
+    function filterAndHighlight() {
+        const query = searchInput.value.trim().toLowerCase();
+        let visibleCount = 0;
+
+        listItems.forEach(item => {
+            // คืนค่า HTML เดิมทุกครั้งก่อนค้นหา
+            item.innerHTML = item.dataset.original;
+            const htmlText = item.innerHTML.toLowerCase();
+
+            if (query === '' || htmlText.includes(query)) {
+                item.style.display = '';
+                visibleCount++;
+
+                if (query !== '') {
+                    // ไฮไลต์คำค้นหาโดยไม่กระทบโครงสร้าง HTML เดิม
+                    const regex = new RegExp(`(${query})`, 'gi');
+                    item.innerHTML = item.innerHTML.replace(regex, '<mark>$1</mark>');
+                }
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        // ถ้าไม่พบผลลัพธ์ให้แสดงข้อความ
+        noResults.classList.toggle('hidden', visibleCount > 0);
+    }
+
+    // แสดง/ซ่อนช่องค้นหา
+    searchToggleBtn.addEventListener('click', () => {
+        searchContainer.classList.toggle('hidden');
+        if (!searchContainer.classList.contains('hidden')) {
+            searchInput.focus();
+        } else {
+            searchInput.value = '';
+            filterAndHighlight();
+        }
+    });
+
+    // ปุ่มคัดลอกทั้งหมด
+    function showAlert(msg) {
+        const box = document.createElement('div');
+        box.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4';
+        box.innerHTML = `<div class="bg-white p-6 rounded-lg shadow-lg text-center w-full max-w-sm">
+            <p class="text-lg font-semibold mb-4">${msg}</p>
+            <button class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                    onclick="this.closest('.fixed').remove()">ตกลง</button>
+        </div>`;
+        document.body.appendChild(box);
+    }
+
+    function getAllText() {
+        return formattedBlock.innerText.trim();
+    }
+
+    function copyAll() {
+        const text = getAllText();
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showAlert('คัดลอกข้อความทั้งหมดแล้ว!');
+    }
+
+    copyAllBtn.addEventListener('click', copyAll);
+    searchInput.addEventListener('input', filterAndHighlight);
+</script>
+
+
+</body>
+</html>

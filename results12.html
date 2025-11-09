@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ผลลัพธ์การค้นหา</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom styles -->
+  <style>
+    /* Custom font - Sarabun */
+    @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap');
+    body {
+      font-family: "Sarabun", sans-serif;
+      background-color: #e0e6eb;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 0.5rem; /* Adjusted padding for smaller screens */
+    }
+    .container {
+      width: 100%;
+      max-width: 800px;
+    }
+    .flashcard {
+      text-indent: 1.5em; /* Slightly reduced indent */
+      font-size: 0.9rem; /* Adjusted base font size for mobile */
+      position: relative;
+      padding-top: 0;
+      margin-bottom: 0.5rem;
+    }
+    .flashcard .paragraph { text-indent: var(--para-indent); white-space: pre-line; margin: 0; }
+    .highlight {
+      background-color: #FFFF00;
+      font-weight: bold;
+    }
+    .copy-button {
+      position: absolute;
+      top: 0.5rem; /* Adjusted position */
+      right: 0.5rem; /* Adjusted position */
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 0.375rem;
+      transition: background-color 0.3s ease;
+      z-index: 10;
+    }
+    .copy-button:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+    .copy-button svg {
+      fill: #4682B4;
+      width: 24px;
+      height: 24px;
+    }
+    .nav-button {
+      background-color: transparent;
+      color: #4A5568;
+      padding: 0.5rem; /* Adjusted padding */
+      border-radius: 0.5rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease, opacity 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px; /* Adjusted size */
+      height: 44px; /* Adjusted size */
+      border: none;
+    }
+    .nav-button:hover:not(:disabled) {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+    .nav-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .nav-button svg {
+      width: 22px; /* Adjusted icon size */
+      height: 22px; /* Adjusted icon size */
+      stroke: currentColor;
+      fill: none;
+    }
+    .note-panel {
+      background-color: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      margin-top: 0.5rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    #noteEditor {
+      width: 100%;
+      min-height: 120px;
+      padding: 0.75rem;
+      border: 1px solid #d1d5db;
+      border-top: none;
+      border-radius: 0 0 0.375rem 0.375rem;
+      resize: vertical;
+      font-family: "Sarabun", sans-serif;
+      font-size: 0.9rem;
+      overflow-y: auto;
+    }
+    #noteEditor:focus {
+        outline: none;
+        border-color: #3B82F6;
+    }
+    .toolbar-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 0.25rem;
+        transition: background-color 0.2s ease-in-out;
+    }
+    .toolbar-btn:hover {
+        background-color: #e5e7eb;
+    }
+    .toolbar-btn svg {
+        stroke: #374151;
+    }
+  
+    /* === Paragraph indent styling for law text === */
+    :root { --para-indent: 4em;   --marker-indent: 2.2em;
+} /* adjust to increase/decrease indent */
+
+    .flashcard .paragraph { text-indent: var(--para-indent); white-space: pre-line; margin: 0; }
+    /* Hanging indent for items like (1) (2) ... */
+    .flashcard .paragraph.hanging { text-indent: calc(var(--para-indent) - var(--marker-indent)); padding-left: var(--marker-indent); }
+    .flashcard .paragraph.hanging .lead { display: none; }
+
+    /* Nested sub-paragraphs styling */
+    .sublist .paragraph { text-indent: var(--para-indent); }
+    .sublist .paragraph.hanging { margin-left: var(--para-indent); text-indent: calc(-1 * var(--marker-indent)); padding-left: var(--marker-indent); }
+    .sublist .paragraph.hanging .lead { display: none; }
+
+/* --- Override for sub_paragraphs: first-line indent; wrapped lines flush left --- */
+.sublist .paragraph { text-indent: var(--para-indent); white-space: pre-line; margin: 0; }
+.sublist .paragraph.hanging { text-indent: var(--para-indent) !important; padding-left: 0 !important; }
+.sublist .paragraph.hanging .lead { display: none !important; }
+
+/* === Sub-paragraph layout: first-line indent aligned with normal paragraphs,
+   continuation lines outdented ~6–7 characters to the left === */
+:root { --outdent: 0.1ch; }  /* tweak to 6ch or 7ch as desired */
+
+.sublist .paragraph {
+  /* Pull the whole block to the left by --outdent */
+  margin-left: calc(-1 * var(--outdent));
+  /* Push first line back to align its '(' exactly with normal paragraph indent */
+  text-indent: calc(var(--para-indent) + var(--outdent));
+  white-space: pre-line;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* Treat 'hanging' same as normal in sublist (we render marker inline e.g. "(1) ...") */
+.sublist .paragraph.hanging {
+  margin-left: calc(-1 * var(--outdent)) !important;
+  text-indent: calc(var(--para-indent) + var(--outdent)) !important;
+  padding-left: 0 !important;
+}
+.sublist .paragraph.hanging .lead { display: none !important; }
+
+/* หมุน caret เมื่อเปิดเมนู */
+.open #titleCaret { transform: rotate(180deg); }
+
+</style>
+</head>
+<body>
+  <div id="resultsView" class="container bg-white rounded-xl shadow-lg p-2 sm:p-4">
+      <div class="flex items-center justify-between mb-0">
+        <!-- MODIFIED: Changed the icon from a chevron to a magnifying glass -->
+        <button class="nav-button" onclick="window.location.href='index.html'" title="กลับไปหน้าค้นหา">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </button>
+        <div id="titleWrapper" class="relative flex-grow px-2">
+  <button id="resultsTitleBtn"
+          class="w-full text-lg sm:text-xl font-bold text-gray-800 text-center flex items-center justify-center gap-2 select-none">
+    <span id="resultsTitleText">ผลลัพธ์การค้นหา</span>
+    <svg id="titleCaret" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transition-transform"
+         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  </button>
+
+  <!-- เมนูดรอปดาวน์ -->
+  <div id="titleDropdown"
+       class="hidden absolute left-1/2 -translate-x-1/2 mt-2 w-50 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+    <button data-link="results6-1.html"
+            class="block w-full text-left px-3 py-2 hover:bg-gray-100">สารบาญฯ
+</button>
+          </div>
+  <!-- element ซ่อน เพื่อให้สคริปต์เก่าที่อาจอ้างอิง #resultsTitle ไม่พัง -->
+  <span id="resultsTitle" class="hidden"></span>
+</div>
+        <div class="w-12"></div> <!-- Spacer -->
+      </div>
+      
+      <div id="sectionNavButtons" class="flex justify-between my-1 px-2 sm:px-4" style="display: none;">
+        <button class="nav-button" id="prevSectionBtn" onclick="window.showPreviousSection()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/></svg>
+        </button>
+        <button class="nav-button" id="noteButton" onclick="window.toggleNotePanel()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"/><circle cx="12" cy="12" r="10"/></svg>
+        </button>
+        <button class="nav-button" id="nextSectionBtn" onclick="window.showNextSection()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 17 5-5-5-5"/><path d="m13 17 5-5-5-5"/></svg>
+        </button>
+      </div>
+
+      <div id="results" class="result text-gray-600 p-1 sm:p-2">
+        <p class="text-center text-gray-500">กำลังโหลดผลลัพธ์...</p>
+      </div>
+
+      <div id="notePanel" class="note-panel hidden p-2 sm:p-4">
+        <p class="text-gray-700 text-sm font-semibold mb-2">โน้ตย่อ:</p>
+        <div id="noteToolbar" class="flex items-center justify-end flex-wrap gap-2 p-2 bg-gray-100 rounded-t-lg border border-gray-300">
+            <button onclick="window.formatDoc('bold')" class="toolbar-btn font-bold">B</button>
+            <button onclick="window.formatDoc('italic')" class="toolbar-btn italic">I</button>
+            <button onclick="window.formatDoc('underline')" class="toolbar-btn underline">U</button>
+            <button onclick="window.saveNote(true)" class="toolbar-btn" title="บันทึกโน้ต">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                    <polyline points="17 21 17 13 7 13 7 21"/>
+                    <polyline points="7 3 7 8 15 8"/>
+                </svg>
+            </button>
+        </div>
+        <div id="noteEditor" contenteditable="true"></div>
+        <p id="noteStatus" class="text-xs text-gray-500 mt-2"></p>
+  </div>
+  </div>
+
+  <script>
+    // Flag to check if the note panel is visible
+    let isNotePanelVisible = false;
+    // Timeout for auto-saving notes
+    let noteSaveTimeout = null;
+
+    // In-memory data store for laws
+    const lawData = {
+      "act": {        
+       "พ.ร.บ.องค์กรอัยการและพนักงานอัยการ พ.ศ.๒๕๕๓": [
+   {
+
+    "section": "มาตรา 1",
+    "paragraphs": [
+      "        มาตรา 1 พระราชบัญญัตินี้เรียกว่า “พระราชบัญญัติองค์กรอัยการและพนักงานอัยการ พ.ศ. 2553”"
+    ]
+  },
+  {
+    "section": "มาตรา 2",
+    "paragraphs": [
+      "        มาตรา 2 พระราชบัญญัตินี้ให้ใช้บังคับตั้งแต่วันถัดจากวันประกาศในราชกิจจานุเบกษาเป็นต้นไป"
+    ]
+  },
+  {
+    "section": "มาตรา 3",
+    "paragraphs": [
+      "        มาตรา 3 ให้ยกเลิก"
+    ],
+    "sub_paragraphs": [
+      "        (1) พระราชบัญญัติพนักงานอัยการ พ.ศ. 2498",
+      "        (2) พระราชบัญญัติพนักงานอัยการ (ฉบับที่ 2) พ.ศ. 2500",
+      "        (3) พระราชบัญญัติพนักงานอัยการ (ฉบับที่ 3) พ.ศ. 2502",
+      "        (4) พระราชบัญญัติพนักงานอัยการ (ฉบับที่ 4) พ.ศ. 2507",
+      "        (5) พระราชบัญญัติพนักงานอัยการ (ฉบับที่ 5) พ.ศ. 2517"
+    ]
+  },
+  {
+    "section": "มาตรา 4",
+    "paragraphs": [
+      "        มาตรา 4 ในพระราชบัญญัตินี้",
+      "        “ก.อ.” หมายความว่า คณะกรรมการอัยการตามกฎหมายว่าด้วยระเบียบข้าราชการฝ่ายอัยการ",
+      "        “ข้าราชการฝ่ายอัยการ” หมายความว่า ข้าราชการฝ่ายอัยการตามกฎหมายว่าด้วยระเบียบข้าราชการฝ่ายอัยการ",
+      "        “พนักงานอัยการ” หมายความว่า ผู้ซึ่งได้รับแต่งตั้งให้ดำรงตำแหน่งพนักงานอัยการตามพระราชบัญญัตินี้",
+      "        “ภาค” หมายความว่า เขตท้องที่ของสำนักงานอัยการสูงสุดที่ ก.อ. กำหนดตามมาตรา 7",
+      "        “หน่วยงานของรัฐ” หมายความว่า องค์กรตามรัฐธรรมนูญ ราชการส่วนกลาง ราชการส่วนภูมิภาค ราชการส่วนท้องถิ่น รัฐวิสาหกิจ องค์การมหาชน หน่วยงานอื่นของรัฐ หรือหน่วยงานอื่นใดที่ดำเนินกิจการของรัฐ",
+      "        “เจ้าหน้าที่ของรัฐ” หมายความว่า ข้าราชการ เจ้าพนักงาน พนักงาน ลูกจ้าง หรือผู้ปฏิบัติงานที่เรียกชื่ออย่างอื่นในหน่วยงานของรัฐไม่ว่าจะได้รับการแต่งตั้งหรือเลือกตั้ง"
+    ]
+  },
+  {
+    "section": "มาตรา 5",
+    "paragraphs": [
+      "        มาตรา 5 ระเบียบตามมาตรา 14 วรรคสามที่ออกตามวรรคหนึ่ง (2) มาตรา 20 วรรคหนึ่ง มาตรา 21 วรรคสอง และมาตรา 27 วรรคสาม และประกาศตามมาตรา 7 วรรคสี่ มาตรา 9 วรรคสาม มาตรา 12 วรรคสอง และมาตรา 14 (9) เมื่อประกาศในราชกิจจานุเบกษาแล้วให้ใช้บังคับได้"
+    ]
+  },
+  {
+    "section": "มาตรา 6",
+    "paragraphs": [
+      "        มาตรา 6 ให้อัยการสูงสุดรักษาการตามพระราชบัญญัตินี้"
+    ]
+  },
+  {
+    "section": "มาตรา 7",
+    "paragraphs": [
+      "        มาตรา 7 องค์กรอัยการประกอบด้วย ก.อ. อัยการสูงสุด และพนักงานอัยการอื่นโดยมีสำนักงานอัยการสูงสุดเป็นหน่วยธุรการ",
+      "        สำนักงานอัยการสูงสุดเป็นส่วนราชการที่มีอิสระในการบริหารงานบุคคล การงบประมาณ และการดำเนินการอื่น และเป็นนิติบุคคล โดยมีอัยการสูงสุดเป็นผู้บังคับบัญชาและเป็นผู้แทนนิติบุคคล",
+      "        ให้ข้าราชการฝ่ายอัยการสังกัดสำนักงานอัยการสูงสุด",
+      "        การแบ่งหน่วยงาน การจัดตั้งและกำหนดท้องที่ของภาค และการกำหนดอำนาจและหน้าที่ของหน่วยงานภายในของสำนักงานอัยการสูงสุด ให้ทำเป็นประกาศ ก.อ."
+    ]
+  },
+  {
+    "section": "มาตรา 8",
+    "paragraphs": [
+      "        มาตรา 8 การปฏิบัติหน้าที่ขององค์กรอัยการต้องเป็นไปตามบทบัญญัติแห่งกฎหมายและหลักนิติธรรม"
+    ]
+  },
+  {
+    "section": "มาตรา 9",
+    "paragraphs": [
+      "        มาตรา 9 ตำแหน่งพนักงานอัยการมี ดังต่อไปนี้"
+    ],
+    "sub_paragraphs": [
+      "        (1) อัยการสูงสุด",
+      "        (2) รองอัยการสูงสุด",
+      "        (3) ผู้ตรวจการอัยการ",
+      "        (4) อธิบดีอัยการ",
+      "        (5) อธิบดีอัยการภาค",
+      "        (6) รองอธิบดีอัยการ",
+      "        (7) รองอธิบดีอัยการภาค",
+      "        (8) อัยการพิเศษฝ่าย",
+      "        (9) อัยการผู้เชี่ยวชาญพิเศษ",
+      "        (10) อัยการผู้เชี่ยวชาญ",
+      "        (11) อัยการจังหวัด",
+      "        (12) อัยการจังหวัดประจำสำนักงานอัยการสูงสุด",
+      "        (13) อัยการประจำสำนักงานอัยการสูงสุด",
+      "        (14) รองอัยการจังหวัด",
+      "        (15) อัยการประจำกอง",
+      "        (16) อัยการจังหวัดผู้ช่วย",
+      "        (17) อัยการผู้ช่วย",
+      "        นอกจากตำแหน่งตามวรรคหนึ่ง ให้มีตำแหน่งอัยการอาวุโสด้วย",
+      "        ในกรณีที่มีเหตุผลและความจำเป็น ก.อ. จะประกาศกำหนดให้มีตำแหน่งที่เรียกชื่ออย่างอื่นนอกจากตำแหน่งตามวรรคหนึ่งโดยจะให้ตำแหน่งใดเทียบเท่าตำแหน่งตามวรรคหนึ่งก็ได้"
+    ]
+  },
+  {
+    "section": "มาตรา 10",
+    "paragraphs": [
+      "        มาตรา 10 การแต่งตั้งและการให้อัยการสูงสุดพ้นจากตำแหน่งต้องเป็นไปตามมติของ ก.อ. และได้รับความเห็นชอบจากวุฒิสภา และให้ประธานวุฒิสภาเป็นผู้ลงนามรับสนองพระบรมราชโองการแต่งตั้งอัยการสูงสุด",
+      "        การแต่งตั้งพนักงานอัยการอื่นและการให้พนักงานอัยการพ้นจากตำแหน่งให้เป็นไปตามกฎหมายว่าด้วยระเบียบข้าราชการฝ่ายอัยการ"
+    ]
+  },
+  {
+    "section": "มาตรา 11",
+    "paragraphs": [
+      "        มาตรา 11 ให้มีพนักงานอัยการไว้เป็นทนายแผ่นดินประจำศาลต่าง ๆ นอกจากศาลทหารตามกรอบอัตรากำลังที่ ก.อ. กำหนดตามความจำเป็นและเหมาะสม"
+    ]
+  },
+  {
+    "section": "มาตรา 12",
+    "paragraphs": [
+      "        มาตรา 12 ในภาคหนึ่ง ๆ ให้มีสำนักงานอัยการภาคโดยมีพนักงานอัยการคนหนึ่งเป็นหัวหน้าเรียกว่า “อธิบดีอัยการภาค”",
+      "        ในท้องที่ที่ตั้งศาลจังหวัด ศาลแขวง หรือศาลเยาวชนและครอบครัว ยกเว้นในเขตกรุงเทพมหานครให้มีสำนักงานอัยการจังหวัดประจำศาลแต่ละศาล มีเขตพื้นที่ตามที่ ก.อ. ประกาศกำหนด โดยมีพนักงานอัยการคนหนึ่งเป็นหัวหน้า เรียกว่า “อัยการจังหวัด”",
+      "        ในสำนักงานอัยการภาคและสำนักงานอัยการจังหวัด จะให้มีพนักงานอัยการตำแหน่งใดจำนวนเท่าใดให้เป็นไปตามที่ ก.อ. กำหนด"
+    ]
+  },
+  {
+    "section": "มาตรา 13",
+    "paragraphs": [
+      "        มาตรา 13 ในกรุงเทพมหานคร ให้พนักงานอัยการซึ่งรับราชการประจำอยู่ในราชการส่วนกลางเป็นพนักงานอัยการประจำศาลชั้นต้นทุกศาล ให้อัยการสูงสุดหรือรองอัยการสูงสุดหรืออธิบดีอัยการที่ได้รับมอบหมายหน้าที่จากอัยการสูงสุดเป็นหัวหน้าในการปฏิบัติราชการของพนักงานอัยการประจำศาลชั้นต้นนั้น"
+    ]
+  },
+  {
+    "section": "มาตรา 14",
+    "paragraphs": [
+      "        มาตรา 14 พนักงานอัยการมีอำนาจและหน้าที่ ดังต่อไปนี้"
+    ],
+    "sub_paragraphs": [
+      "        (1) อำนาจและหน้าที่ตามรัฐธรรมนูญ",
+      "        (2) ในคดีอาญา มีอำนาจและหน้าที่ตามประมวลกฎหมายวิธีพิจารณาความอาญาและตามกฎหมายอื่นซึ่งบัญญัติว่าเป็นอำนาจและหน้าที่ของสำนักงานอัยการสูงสุดหรือพนักงานอัยการ",
+      "        (3) ในคดีแพ่ง หรือคดีปกครอง มีอำนาจและหน้าที่ดำเนินคดีแทนรัฐบาล หน่วยงานของรัฐที่เป็นองค์กรตามรัฐธรรมนูญ ราชการส่วนกลาง หรือราชการส่วนภูมิภาคในศาล หรือในกระบวนการทางอนุญาโตตุลาการทั้งปวง กับมีอำนาจและหน้าที่ตามกฎหมายอื่นซึ่งบัญญัติว่าเป็นอำนาจและหน้าที่ของสำนักงานอัยการสูงสุดหรือพนักงานอัยการ",
+      "        (4) ในคดีแพ่ง คดีปกครอง หรือคดีอาญา ซึ่งเจ้าหน้าที่ของรัฐถูกฟ้องในเรื่องการที่ได้กระทำไปตามหน้าที่ก็ดี หรือในคดีแพ่งหรือคดีอาญาที่ราษฎรผู้หนึ่งผู้ใดถูกฟ้องในเรื่องการที่ได้กระทำตามคำสั่งของเจ้าหน้าที่ของรัฐซึ่งได้สั่งการโดยชอบด้วยกฎหมาย หรือเข้าร่วมหรือช่วยเหลือเจ้าหน้าที่ของรัฐซึ่งกระทำการในหน้าที่ราชการก็ดี เมื่อเห็นสมควรพนักงานอัยการจะรับแก้ต่างให้ก็ได้",
+      "        (5) ในคดีแพ่ง คดีปกครอง หรือกรณีมีข้อพิพาทที่ต้องดำเนินการทางอนุญาโตตุลาการที่หน่วยงานของรัฐซึ่งมิได้กล่าวใน (3) หรือนิติบุคคลซึ่งมิใช่หน่วยงานของรัฐ แต่ได้มีพระราชบัญญัติหรือพระราชกฤษฎีกาจัดตั้งขึ้นเป็นคู่กรณีและมิใช่กรณีที่เป็นข้อพิพาทกับรัฐบาลหรือระหว่างหน่วยงานของรัฐด้วยกันเอง เมื่อเห็นสมควรพนักงานอัยการจะรับว่าต่างหรือแก้ต่างให้ก็ได้",
+      "        (6) ในคดีที่ราษฎรฟ้องเองไม่ได้โดยกฎหมายห้าม เมื่อเห็นสมควรพนักงานอัยการมีอำนาจเป็นโจทก์ได้",
+      "        (7) ดำเนินการตามที่เห็นสมควรเกี่ยวกับการบังคับคดีอาญาเฉพาะในส่วนของการยึดทรัพย์สินใช้ค่าปรับตามคำพิพากษา ในการนี้มิให้เรียกค่าฤชาธรรมเนียมจากพนักงานอัยการ",
+      "        (8) ในกรณีที่มีการผิดสัญญาประกันจำเลย หรือประกันรับสิ่งของไปดูแลรักษาตามประมวลกฎหมายวิธีพิจารณาความอาญา มีอำนาจและหน้าที่ดำเนินคดีในการบังคับให้เป็นไปตามสัญญานั้นในการนี้มิให้เรียกค่าฤชาธรรมเนียมจากพนักงานอัยการ",
+      "        (9) อำนาจและหน้าที่อื่นตามที่ ก.อ. ประกาศกำหนดหรือเห็นชอบเพื่อปฏิบัติให้เป็นไปตามกฎหมาย หรือมติคณะรัฐมนตรี",
+      "        (10) ปฏิบัติหน้าที่อื่นตามที่กฎหมายกำหนดให้เป็นอำนาจและหน้าที่ของพนักงานอัยการ",
+      "        (11) ปฏิบัติหน้าที่อื่นตามที่กำหนดให้เป็นอำนาจและหน้าที่ของสำนักงานอัยการสูงสุดตามที่ได้รับมอบหมายจากอัยการสูงสุด",
+      "        ในการปฏิบัติหน้าที่ของพนักงานอัยการตามมาตรา 14 (3) (4) และ (5) พนักงานอัยการจะออกคำสั่งเรียกบุคคลใด ๆ ที่เกี่ยวข้องมาให้ถ้อยคำก็ได้ แต่จะเรียกคู่ความอีกฝ่ายหนึ่งมาให้ถ้อยคำโดยคู่ความฝ่ายนั้นไม่ยินยอมไม่ได้",
+      "        พนักงานอัยการตำแหน่งใดมีอำนาจดำเนินการตามวรรคหนึ่งได้เพียงใดให้เป็นไปตามระเบียบที่สำนักงานอัยการสูงสุดกำหนดโดยความเห็นชอบของ ก.อ."
+    ]
+  },
+  {
+    "section": "มาตรา 15",
+    "paragraphs": [
+      "        มาตรา 15 อัยการสูงสุดและรองอัยการสูงสุดมีอำนาจดำเนินคดีได้ทุกศาล อธิบดีอัยการภาคมีอำนาจดำเนินคดีได้ทุกศาลภายในภาค พนักงานอัยการผู้อื่นมีอำนาจดำเนินคดีได้เฉพาะศาลแห่งท้องที่ที่พนักงานอัยการผู้นั้นรับราชการประจำ เว้นแต่"
+    ],
+    "sub_paragraphs": [
+      "        (1) เมื่ออัยการสูงสุดมีคำสั่งให้พนักงานอัยการซึ่งรับราชการประจำในท้องที่หนึ่งไปช่วยราชการในอีกท้องที่หนึ่งชั่วคราว หรือให้ไปดำเนินคดีใดเฉพาะเรื่อง หรือเมื่ออธิบดีอัยการภาคได้มีคำสั่งให้พนักงานอัยการซึ่งรับราชการประจำในท้องที่หนึ่งภายในภาคไปช่วยราชการในอีกท้องที่หนึ่งชั่วคราวหรือให้ไปดำเนินคดีใดเฉพาะเรื่องภายในภาค ให้พนักงานอัยการผู้นั้นมีอำนาจดำเนินคดีในศาลประจำท้องที่นั้นได้ และให้มีอำนาจดำเนินคดีได้ตลอดถึงศาลอุทธรณ์และศาลฎีกา หรือศาลปกครองสูงสุด แล้วแต่กรณี",
+      "        (2) เมื่ออธิบดีอัยการภาคมีคำสั่งให้พนักงานอัยการซึ่งรับราชการประจำในภาคมีอำนาจดำเนินคดีในศาลทุกศาลภายในภาค ให้พนักงานอัยการผู้นั้นมีอำนาจดำเนินคดีในศาลทุกศาลภายในภาคนั้นได้ และให้มีอำนาจดำเนินคดีได้ตลอดถึงศาลอุทธรณ์และศาลฎีกา หรือศาลปกครองสูงสุด แล้วแต่กรณี",
+      "        (3) เมื่อคดีที่พนักงานอัยการได้ดำเนินไว้ในศาลชั้นต้นขึ้นมาสู่การพิจารณาของศาลอุทธรณ์หรือศาลฎีกา พนักงานอัยการผู้ดำเนินคดีนั้น หรือพนักงานอัยการผู้อื่นซึ่งประจำศาลชั้นต้นนั้นหรือพนักงานอัยการอื่นซึ่งได้รับแต่งตั้งหรือได้รับมอบหมายจากอัยการสูงสุดมีอำนาจดำเนินคดีในชั้นอุทธรณ์หรือชั้นฎีกาได้",
+      "        (4) ในคดีที่ศาลส่งประเด็นไปสืบพยานยังศาลอื่น หรือโอนคดีไปพิจารณายังศาลอื่นพนักงานอัยการประจำศาลอื่นนั้น หรือพนักงานอัยการผู้ดำเนินคดีมาแต่ต้น หรือพนักงานอัยการซึ่งประจำศาลที่ดำเนินคดีมาแต่ต้น มีอำนาจดำเนินคดีนั้นในศาลที่สืบพยานตามประเด็น หรือศาลที่รับโอนคดีนั้นได้"
+    ]
+  },
+  {
+    "section": "มาตรา 16",
+    "paragraphs": [
+      "        มาตรา 16 ในการปฏิบัติการตามอำนาจและหน้าที่เฉพาะในคดีที่ต้องตั้งต้นที่พนักงานอัยการ หรือในการตรวจสอบข้อเท็จจริงเพื่อดำเนินการตามรัฐธรรมนูญหรือตามกฎหมายอื่นใดให้พนักงานอัยการมีอำนาจในการแสวงหาข้อเท็จจริงและรวบรวมพยานหลักฐาน สอบปากคำพยานบุคคล ออกคำสั่งเรียกบุคคลใดมาให้การต่อพนักงานอัยการ ออกคำสั่งให้ส่งพยานหลักฐาน เอกสารหรือวัตถุ และดำเนินการอื่นตามที่เห็นสมควร รวมทั้งอาจแจ้งให้เจ้าหน้าที่ผู้มีอำนาจหรือเจ้าหน้าที่ของรัฐดำเนินการใดตามที่เห็นสมควรก็ได้ แต่ทั้งนี้ ถ้าผู้ที่ได้รับคำสั่งนั้นเป็นคู่ความอีกฝ่ายหนึ่งหรือเป็นผู้ถูกกล่าวหา บุคคลดังกล่าวจะไม่มาหรือไม่ให้ถ้อยคำหรือไม่ส่งพยานหลักฐาน เอกสารหรือวัตถุตามที่เรียกก็ได้"
+    ]
+  },
+  {
+    "section": "มาตรา 17",
+    "paragraphs": [
+      "        มาตรา 17 ในการปฏิบัติหน้าที่ของพนักงานอัยการในกรณีที่กฎหมายกำหนดให้มีอำนาจและหน้าที่ในการสอบสวนคดีอาญาซึ่งมิใช่การร่วมสอบสวนกับพนักงานสอบสวนหรือร่วมทำสำนวนสอบสวนกับพนักงานสอบสวน ให้พนักงานอัยการมีอำนาจและหน้าที่ในการสอบสวนเช่นเดียวกับพนักงานสอบสวน ทั้งนี้ ให้พนักงานอัยการเป็นพนักงานฝ่ายปกครองหรือตำรวจชั้นผู้ใหญ่และมีอำนาจและหน้าที่ตามประมวลกฎหมายวิธีพิจารณาความอาญา โดยในการค้น การจับ และการคุมขังอาจร่วมกับเจ้าพนักงานตำรวจ หรือเจ้าพนักงานอื่น หรือแจ้งให้เจ้าพนักงานตำรวจ หรือเจ้าพนักงานอื่นดำเนินการก็ได้"
+    ]
+  },
+  {
+    "section": "มาตรา 18",
+    "paragraphs": [
+      "        มาตรา 18 คำสั่งของพนักงานอัยการตามมาตรา 16 และมาตรา 17 ให้ถือเป็นคำบังคับของพนักงานอัยการตามประมวลกฎหมายอาญา"
+    ]
+  },
+  {
+    "section": "มาตรา 19",
+    "paragraphs": [
+      "        มาตรา 19 ในการใช้อำนาจหรือกระทำหน้าที่ของพนักงานอัยการตามประมวลกฎหมายวิธีพิจารณาความอาญาหรือกฎหมายอื่น ให้อัยการสูงสุดมีอำนาจทำคำสั่งเฉพาะเรื่อง หรือวางระเบียบไว้ให้พนักงานอัยการปฏิบัติการได้",
+      "        ในกรณีที่กฎหมายบัญญัติให้เป็นอำนาจของอัยการสูงสุด ถ้ากฎหมายมิได้กำหนดวิธีการมอบอำนาจไว้เป็นการเฉพาะ อัยการสูงสุดจะมอบอำนาจนั้นให้รองอัยการสูงสุดหรืออธิบดีอัยการภาคก็ได้ ทั้งนี้ เว้นแต่อำนาจตามมาตรา 21 แห่งพระราชบัญญัตินี้ และมาตรา 20 วรรคหก มาตรา 143 และมาตรา 145 แห่งประมวลกฎหมายวิธีพิจารณาความอาญา",
+      "        ในการมอบอำนาจตามวรรคสอง อัยการสูงสุดจะวางระเบียบให้ผู้รับมอบอำนาจต้องปฏิบัติด้วยก็ได้"
+    ]
+  },
+  {
+    "section": "มาตรา 20",
+    "paragraphs": [
+      "        มาตรา 20 ภายใต้บังคับมาตรา 19 การรักษาราชการแทนและการปฏิบัติราชการแทนพนักงานอัยการซึ่งดำรงตำแหน่งตามมาตรา 9 ให้เป็นไปตามระเบียบที่ ก.อ. กำหนด",
+      "        ในกรณีที่มีกฎหมายอื่นแต่งตั้งให้พนักงานอัยการผู้ดำรงตำแหน่งใดเป็นกรรมการ หรือให้มีอำนาจและหน้าที่อย่างใด ให้ผู้รักษาราชการแทนหรือผู้ปฏิบัติราชการแทนมีอำนาจและหน้าที่เป็นกรรมการหรือมีอำนาจและหน้าที่เช่นเดียวกับผู้ดำรงตำแหน่งนั้นในการรักษาราชการแทนหรือปฏิบัติราชการแทนด้วย แล้วแต่กรณี"
+    ]
+  },
+  {
+    "section": "มาตรา 21",
+    "paragraphs": [
+      "        มาตรา 21 พนักงานอัยการมีอิสระในการพิจารณาสั่งคดีและการปฏิบัติหน้าที่ให้เป็นไปตามรัฐธรรมนูญและตามกฎหมายโดยสุจริตและเที่ยงธรรม",
+      "        ถ้าพนักงานอัยการเห็นว่าการฟ้องคดีอาญาจะไม่เป็นประโยชน์แก่สาธารณชน หรือจะมีผลกระทบต่อความปลอดภัยหรือความมั่นคงของชาติ หรือต่อผลประโยชน์อันสำคัญของประเทศให้เสนอต่ออัยการสูงสุด และอัยการสูงสุดมีอำนาจสั่งไม่ฟ้องได้ ทั้งนี้ ตามระเบียบที่สำนักงานอัยการสูงสุดกำหนด โดยความเห็นชอบของ ก.อ.",
+      "        ให้นำความในวรรคสองมาใช้บังคับกับกรณีที่พนักงานอัยการไม่ยื่นคำร้อง ไม่อุทธรณ์ ไม่ฎีกา ถอนฟ้อง ถอนคำร้อง ถอนอุทธรณ์ และถอนฎีกาด้วยโดยอนุโลม"
+    ]
+  },
+  {
+    "section": "มาตรา 22",
+    "paragraphs": [
+      "        มาตรา 22 ดุลพินิจของพนักงานอัยการในการพิจารณาสั่งคดีและการปฏิบัติหน้าที่ตามมาตรา 21 ซึ่งได้แสดงเหตุผลอันสมควรประกอบแล้ว ย่อมได้รับความคุ้มครอง"
+    ]
+  },
+  {
+    "section": "มาตรา 23",
+    "paragraphs": [
+      "        มาตรา 23 สำนักงานอัยการสูงสุด นอกจากมีอำนาจและหน้าที่เกี่ยวกับงานธุรการและงานวิชาการ เพื่อสนับสนุนและอำนวยความสะดวกให้แก่พนักงานอัยการแล้ว ให้มีอำนาจและหน้าที่ดังต่อไปนี้ด้วย"
+    ],
+    "sub_paragraphs": [
+      "        (1) ให้ความช่วยเหลือประชาชนในการดำเนินการทางกฎหมายรวมตลอดทั้งในการคุ้มครองป้องกันสิทธิและเสรีภาพของประชาชน และการให้ความรู้ทางกฎหมายแก่ประชาชน",
+      "        (2) ให้คำปรึกษา และตรวจร่างสัญญาหรือเอกสารทางกฎหมายให้แก่รัฐบาลและหน่วยงานของรัฐ",
+      "        (3) ให้คำปรึกษา และตรวจร่างสัญญาหรือเอกสารทางกฎหมายให้แก่นิติบุคคลซึ่งมิใช่หน่วยงานของรัฐแต่ได้มีพระราชบัญญัติหรือพระราชกฤษฎีกาจัดตั้งขึ้น ทั้งนี้ ตามที่เห็นสมควร",
+      "        (4) ดำเนินการเกี่ยวกับการบังคับคดีแพ่ง หรือคดีปกครองแทนรัฐบาลหรือหน่วยงานของรัฐซึ่งพนักงานอัยการได้รับดำเนินคดีให้",
+      "        (5) ดำเนินการตามที่คณะรัฐมนตรีร้องขอ เว้นแต่การดำเนินการนั้นจะขัดต่องานในหน้าที่หรืออาจทำให้ขัดต่อความเป็นอิสระในการปฏิบัติหน้าที่ของพนักงานอัยการ",
+      "        (6) ดำเนินการเกี่ยวกับการฝึกอบรมเพื่อประโยชน์ในการพัฒนาข้าราชการฝ่ายอัยการ",
+      "        (7) ให้ความร่วมมือกับหน่วยงานของรัฐในการอำนวยความยุติธรรม การรักษาผลประโยชน์ของรัฐและประชาชน",
+      "        (8) ติดต่อและประสานงานกับองค์กรหรือหน่วยงานต่างประเทศเกี่ยวกับเรื่องที่อยู่ในอำนาจและหน้าที่ของพนักงานอัยการหรือสำนักงานอัยการสูงสุด",
+      "        (9) ปฏิบัติการอื่นใดตามที่กฎหมายกำหนดให้เป็นอำนาจและหน้าที่ของพนักงานอัยการหรือสำนักงานอัยการสูงสุด",
+      "        ในการตรวจร่างสัญญาตาม (2) และ (3) ให้สำนักงานอัยการสูงสุดมีหน้าที่รักษาประโยชน์ของรัฐ ในการนี้ สำนักงานอัยการสูงสุดมีหน้าที่รายงานรัฐบาล หรือหน่วยงานของรัฐตาม (2) หรือนิติบุคคลตาม (3) ที่เป็นคู่สัญญาให้ทราบถึงข้อที่ควรปรับปรุงหรือแก้ไขให้สมบูรณ์ ข้อเสียเปรียบหรือข้อที่อาจก่อให้เกิดความเสียหายแก่รัฐ"
+    ]
+  },
+  {
+    "section": "มาตรา 24",
+    "paragraphs": [
+      "        มาตรา 24 ให้สำนักงานอัยการสูงสุดเสนองบประมาณรายจ่ายต่อคณะรัฐมนตรีเพื่อจัดสรรเป็นเงินอุดหนุนสำนักงานอัยการสูงสุดไว้ในร่างพระราชบัญญัติงบประมาณรายจ่ายประจำปีงบประมาณหรือร่างพระราชบัญญัติงบประมาณรายจ่ายเพิ่มเติม หรือร่างพระราชบัญญัติโอนงบประมาณรายจ่าย แล้วแต่กรณี",
+      "        ในกรณีที่สำนักงานอัยการสูงสุดเห็นว่างบประมาณรายจ่ายที่ได้รับการจัดสรรให้ไม่เพียงพอ ให้สำนักงานอัยการสูงสุดเสนอคำขอแปรญัตติต่อคณะกรรมาธิการพิจารณางบประมาณของสภาผู้แทนราษฎรได้โดยตรง"
+    ]
+  },
+  {
+    "section": "มาตรา 25",
+    "paragraphs": [
+      "        มาตรา 25 ให้สำนักงานอัยการสูงสุดเป็นหน่วยรับตรวจตามกฎหมายประกอบรัฐธรรมนูญว่าด้วยการตรวจเงินแผ่นดิน",
+      "        เมื่อสำนักงานการตรวจเงินแผ่นดินได้ทำการตรวจสอบรับรองบัญชีและการเงินทุกประเภทของสำนักงานอัยการสูงสุดแล้ว ให้เสนอผลการสอบบัญชีโดยตรงต่อสภาผู้แทนราษฎร วุฒิสภา และคณะรัฐมนตรีด้วย"
+    ]
+  },
+  {
+    "section": "มาตรา 26",
+    "paragraphs": [
+      "        มาตรา 26 ในกรณีที่มีกฎหมาย กฎ ระเบียบ ข้อบังคับ หรือประกาศกำหนดให้กระทรวง ทบวง กรม ได้รับการยกเว้นไม่ต้องเสียภาษี หรือได้รับการยกเว้น หรือผ่อนผันการปฏิบัติตามกฎหมายในเรื่องใด ให้สำนักงานอัยการสูงสุดได้รับการยกเว้น หรือผ่อนผันการปฏิบัติตามกฎหมายในเรื่องนั้นด้วย"
+    ]
+  },
+  {
+    "section": "มาตรา 27",
+    "paragraphs": [
+      "        มาตรา 27 ให้อัยการสูงสุดมีอำนาจและหน้าที่ ดังต่อไปนี้"
+    ],
+    "sub_paragraphs": [
+      "        (1) กำหนดนโยบายและรับผิดชอบในการปฏิบัติราชการของสำนักงานอัยการสูงสุด ให้เกิดผลสัมฤทธิ์และเป็นไปตามเป้าหมาย แนวทาง และแผนการปฏิบัติราชการของสำนักงานอัยการสูงสุด",
+      "        (2) ควบคุมดูแล และรับผิดชอบในการบริหารราชการ ปฏิบัติราชการ และบริหารงานบุคคลของสำนักงานอัยการสูงสุด ให้เป็นไปตามกฎหมาย ระเบียบ แบบแผนและประเพณีปฏิบัติของทางราชการ",
+      "        (3) บริหารจัดการงบประมาณ การเงิน ทรัพย์สิน และการพัสดุของสำนักงานอัยการสูงสุด",
+      "        ในการปฏิบัติหน้าที่ราชการตามวรรคหนึ่ง อัยการสูงสุดอาจมอบอำนาจให้รองอัยการสูงสุดหรือข้าราชการฝ่ายอัยการผู้หนึ่งผู้ใดปฏิบัติหน้าที่แทนได้",
+      "        ให้อัยการสูงสุดโดยความเห็นชอบของ ก.อ. มีอำนาจออกระเบียบเกี่ยวกับการบริหารจัดการงบประมาณ การเงิน ทรัพย์สิน และการพัสดุของสำนักงานอัยการสูงสุด",
+      "        ในการปฏิบัติหน้าที่ตาม (1) และ (2) ให้อัยการสูงสุดมีอำนาจออกระเบียบ ประกาศ หรือคำสั่งอันจำเป็นต่อการปฏิบัติราชการของสำนักงานอัยการสูงสุด ทั้งนี้ เท่าที่ไม่ขัดหรือแย้งกับระเบียบ หรือประกาศที่ ก.อ. กำหนดตามพระราชบัญญัตินี้"
+    ]
+  },
+  {
+    "section": "มาตรา 28",
+    "paragraphs": [
+      "        มาตรา 28 ให้สำนักงานอัยการสูงสุดตามพระราชบัญญัติปรับปรุงกระทรวง ทบวง กรม พ.ศ. 2545 เป็นสำนักงานอัยการสูงสุดตามพระราชบัญญัตินี้"
+    ]
+  },
+  {
+    "section": "มาตรา 29",
+    "paragraphs": [
+      "        มาตรา 29 ให้โอนบรรดากิจการ ทรัพย์สิน สิทธิ หนี้ ข้าราชการ พนักงาน ลูกจ้าง และเงินงบประมาณ ของสำนักงานอัยการสูงสุดตามพระราชบัญญัติปรับปรุงกระทรวง ทบวง กรม พ.ศ. 2545 ไปเป็นของสำนักงานอัยการสูงสุดตามพระราชบัญญัตินี้"
+    ]
+  },
+  {
+    "section": "มาตรา 30",
+    "paragraphs": [
+      "        มาตรา 30 ให้บรรดาพระราชกฤษฎีกา กฎ ระเบียบ ข้อกำหนด ข้อบังคับ ประกาศ หรือคำสั่งที่ใช้บังคับเกี่ยวกับการจัดระเบียบบริหารราชการ การแบ่งส่วนราชการ และการปฏิบัติหน้าที่ของพนักงานอัยการ และการอื่นใดที่ใช้บังคับกับพนักงานอัยการหรือสำนักงานอัยการสูงสุด ที่ยังมีผลใช้บังคับอยู่ในวันก่อนวันที่พระราชบัญญัตินี้ใช้บังคับ คงใช้บังคับได้ต่อไปเท่าที่ไม่ขัดหรือแย้งกับบทบัญญัติแห่งพระราชบัญญัตินี้ จนกว่าจะมีระเบียบ ประกาศ หรือคำสั่งของ ก.อ. หรือของอัยการสูงสุดที่ออกตามพระราชบัญญัตินี้ใช้บังคับ"
+    ]
+  },
+  {
+    "section": "มาตรา 31",
+    "paragraphs": [
+      "        มาตรา 31 บรรดากฎหมาย กฎ ระเบียบ ข้อกำหนด ข้อบังคับ ประกาศ คำสั่ง หรือมติคณะรัฐมนตรีในเรื่องใดที่มีอยู่ก่อนวันที่พระราชบัญญัตินี้ใช้บังคับ ที่อ้างถึงกรมอัยการ อธิบดีกรมอัยการ รองอธิบดีกรมอัยการ และผู้ตรวจราชการอัยการ ให้ถือว่ากฎหมาย กฎ ระเบียบ ข้อกำหนด ข้อบังคับ ประกาศ คำสั่ง หรือมติคณะรัฐมนตรีในเรื่องนั้น อ้างถึงสำนักงานอัยการสูงสุด อัยการสูงสุด รองอัยการสูงสุด และผู้ตรวจการอัยการ ตามพระราชบัญญัตินี้ ตามลำดับ",
+      "        บรรดากฎหมาย กฎ ระเบียบ ข้อกำหนด ข้อบังคับ ประกาศ คำสั่ง หรือมติคณะรัฐมนตรีในเรื่องใดที่มีอยู่ก่อนวันที่พระราชบัญญัตินี้ใช้บังคับ ที่อ้างถึงอัยการพิเศษฝ่ายปรึกษาหรือตำแหน่งที่เทียบกับตำแหน่งอัยการพิเศษฝ่ายปรึกษา อัยการพิเศษฝ่ายคดีหรือตำแหน่งที่เทียบกับตำแหน่งอัยการพิเศษฝ่ายคดี อัยการพิเศษฝ่ายวิชาการหรือตำแหน่งที่เทียบกับตำแหน่งอัยการพิเศษฝ่ายวิชาการ ให้ถือว่ากฎหมาย กฎ ระเบียบ ข้อกำหนด ข้อบังคับ ประกาศ คำสั่ง หรือมติคณะรัฐมนตรีในเรื่องนั้น อ้างถึงอธิบดีอัยการตามพระราชบัญญัตินี้",
+      "        บรรดากฎหมาย กฎ ระเบียบ ข้อกำหนด ข้อบังคับ ประกาศ คำสั่ง หรือมติคณะรัฐมนตรีในเรื่องใดที่มีอยู่ก่อนวันที่พระราชบัญญัตินี้ใช้บังคับ ที่อ้างถึงอัยการพิเศษประจำเขตหรือตำแหน่งที่เทียบกับอัยการพิเศษประจำเขต รองอธิบดีอัยการฝ่าย รองอธิบดีอัยการเขต อัยการจังหวัดประจำกรม และอัยการประจำกรม ให้ถือว่ากฎหมาย กฎ ระเบียบ ข้อกำหนด ข้อบังคับ ประกาศ คำสั่ง หรือมติคณะรัฐมนตรีในเรื่องนั้น อ้างถึงอธิบดีอัยการภาค รองอธิบดีอัยการ รองอธิบดีอัยการภาค อัยการจังหวัดประจำสำนักงานอัยการสูงสุด และอัยการประจำสำนักงานอัยการสูงสุด ตามพระราชบัญญัตินี้ ตามลำดับ"
+    ]
+  }
+]
+      }
+    };
+
+    // Global variables to hold search context
+    let currentLawType = '';
+    let currentLawName = '';
+    let currentSearchMode = '';
+    let lastKeyword = '';
+    let currentMatchedSections = [];
+    let currentSectionDisplayIndex = -1;
+
+    // Swipe gesture handling variables
+    let swipeStartX = 0;
+    let swipeCurrentX = 0;
+    let isSwiping = false;
+    let hasDragged = false;
+    const swipeThreshold = 50;
+
+    // Helper function to get a sortable value from a section string
+    function getSectionSortValue(sectionStr) {
+      const parts = sectionStr.split(' ');
+      const num = parseInt(parts[1]);
+      let suffixOrder = 0;
+      if (parts.length > 2) {
+        const suffix = parts[2];
+        switch (suffix) {
+          case 'ทวิ': suffixOrder = 1; break;
+          case 'ตรี': suffixOrder = 2; break;
+          case 'จัตวา': suffixOrder = 3; break;
+          case 'เบญจ': suffixOrder = 4; break;
+          default: suffixOrder = 99;
+        }
+      }
+      return num * 100 + suffixOrder;
+    }
+
+    // --- Helpers: normalize "มาตรา XX [suffix]" and Thai digits ---
+    function thaiDigitsToArabic(str) {
+      const map = {'๐':'0','๑':'1','๒':'2','๓':'3','๔':'4','๕':'5','๖':'6','๗':'7','๘':'8','๙':'9'};
+      return String(str).replace(/[๐-๙]/g, d => map[d]);
+    }
+    function normSectionTitle(s) {
+      const m = String(s).trim().match(/^มาตรา\s+([0-9๐-๙]+)(?:\s+(ทวิ|ตรี|จัตวา|เบญจ))?/);
+      if (!m) return {num: NaN, suffix: ''};
+      return { num: parseInt(thaiDigitsToArabic(m[1]), 10), suffix: m[2] || '' };
+    }
+    function findSectionIndexTolerant(list, targetStr) {
+      // exact match first
+      let idx = list.findIndex(it => it.section === targetStr);
+      if (idx !== -1) return idx;
+      const tgt = normSectionTitle(targetStr);
+      // normalize by parsed number + suffix
+      idx = list.findIndex(it => {
+        const sec = normSectionTitle(it.section);
+        if (sec.num === tgt.num && (sec.suffix||'') === (tgt.suffix||'')) return true;
+        // fallback: if "ทวิ/ตรี/ฯ" in first paragraph but section label lacks suffix
+        if (tgt.suffix && !sec.suffix && it.paragraphs && it.paragraphs.length > 0) {
+          const p0 = String(it.paragraphs[0]).trim();
+          if (p0.startsWith(`มาตรา ${tgt.num} ${tgt.suffix}`)) return true;
+        }
+        return false;
+      });
+      return idx;
+    }
+
+
+    // Swipe event handlers
+    function handleSwipeStart(e) {
+      if (currentSearchMode !== 'section' || currentMatchedSections.length <= 1) return;
+      isSwiping = true; hasDragged = false;
+      swipeStartX = (e.touches ? e.touches[0].clientX : e.clientX);
+    }
+    function handleSwipeMove(e) {
+      if (!isSwiping || currentSearchMode !== 'section' || currentMatchedSections.length <= 1) return;
+      swipeCurrentX = (e.touches ? e.touches[0].clientX : e.clientX);
+      if (Math.abs(swipeCurrentX - swipeStartX) > 5) { hasDragged = true; }
+    }
+    function handleSwipeEnd(e) {
+      if (!isSwiping || currentSearchMode !== 'section' || currentMatchedSections.length <= 1) return;
+      isSwiping = false;
+      if (hasDragged) {
+        const diffX = swipeCurrentX - swipeStartX;
+        if (diffX > swipeThreshold) { window.showPreviousSection(); } 
+        else if (diffX < -swipeThreshold) { window.showNextSection(); }
+      }
+      swipeStartX = 0; swipeCurrentX = 0; hasDragged = false;
+    }
+
+    // Copies text to the clipboard
+    window.copyToClipboard = function(text) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      window.showCustomAlert('คัดลอกข้อความแล้ว!');
+      document.body.removeChild(textarea);
+    }
+
+    // Displays a custom alert modal
+    window.showCustomAlert = function(message) {
+        const alertBox = document.createElement('div');
+        alertBox.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4';
+        alertBox.innerHTML = `<div class="bg-white p-6 rounded-lg shadow-lg text-center w-full max-w-sm"><p class="text-lg font-semibold mb-4">${message}</p><button class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600" onclick="this.closest('.fixed').remove()">ตกลง</button></div>`;
+        document.body.appendChild(alertBox);
+    }
+
+    // Rich text editor command executor
+    window.formatDoc = function(command, value = null) {
+        document.execCommand(command, false, value);
+        document.getElementById('noteEditor').focus();
+    }
+
+    // Generates a unique key for storing a note in localStorage
+    function getNoteStorageKey(lawType, lawName, section) {
+        return `note::${lawType}::${lawName}::${section}`;
+    }
+
+    // Toggles the visibility of the note-taking panel
+    window.toggleNotePanel = function() {
+      const notePanel = document.getElementById('notePanel');
+      isNotePanelVisible = !isNotePanelVisible;
+      if (isNotePanelVisible) {
+        notePanel.classList.remove('hidden');
+        loadNoteForCurrentSection();
+      } else {
+        notePanel.classList.add('hidden');
+      }
+    }
+
+    // Saves the current note to localStorage
+    window.saveNote = function(isManualSave = true) {
+      if (currentSectionDisplayIndex === -1 || currentMatchedSections.length === 0) return;
+      
+      const noteEditor = document.getElementById('noteEditor');
+      const noteStatus = document.getElementById('noteStatus');
+      const noteHtml = noteEditor.innerHTML;
+      const noteText = noteEditor.textContent || noteEditor.innerText;
+
+      if (!isNotePanelVisible) return;
+      
+      const currentSection = currentMatchedSections[currentSectionDisplayIndex];
+      const noteKey = getNoteStorageKey(currentLawType, currentLawName, currentSection.section);
+
+      if (noteText.trim() === '') {
+          if (localStorage.getItem(noteKey)) {
+              localStorage.removeItem(noteKey);
+              if (isManualSave) {
+                  noteStatus.textContent = 'โน้ตว่างเปล่า ถูกลบแล้ว';
+                  setTimeout(() => { noteStatus.textContent = ''; }, 2000);
+              }
+          }
+          return;
+      }
+      
+      if (isManualSave) noteStatus.textContent = 'กำลังบันทึก...';
+
+      try {
+        localStorage.setItem(noteKey, noteHtml);
+        if (isManualSave) {
+            noteStatus.textContent = 'บันทึกโน้ตเรียบร้อยแล้ว!';
+            setTimeout(() => {
+                if(noteStatus.textContent === 'บันทึกโน้ตเรียบร้อยแล้ว!'){
+                    noteStatus.textContent = '';
+                }
+            }, 2000);
+        }
+      } catch (e) {
+        noteStatus.textContent = 'เกิดข้อผิดพลาดในการบันทึก: ' + e.message;
+      }
+    }
+
+    // Loads the note for the currently displayed section
+    function loadNoteForCurrentSection() {
+      const noteEditor = document.getElementById('noteEditor');
+      const noteStatus = document.getElementById('noteStatus');
+      if (currentSectionDisplayIndex === -1 || currentMatchedSections.length === 0) {
+        noteEditor.innerHTML = '';
+        noteStatus.textContent = 'ไม่มีโน้ตสำหรับมาตรานี้';
+        return;
+      }
+      const currentSection = currentMatchedSections[currentSectionDisplayIndex];
+      const noteKey = getNoteStorageKey(currentLawType, currentLawName, currentSection.section);
+      const savedNote = localStorage.getItem(noteKey);
+      noteEditor.innerHTML = savedNote || '';
+      noteStatus.textContent = savedNote ? 'โหลดโน้ตเรียบร้อยแล้ว' : 'ยังไม่มีโน้ตสำหรับมาตรานี้';
+    }
+
+    // Renders the content for the currently selected section
+    function renderSectionDisplay() {
+      const resultsDiv = document.getElementById("results");
+      const sectionNavButtons = document.getElementById("sectionNavButtons");
+      const notePanel = document.getElementById('notePanel');
+      
+      if (currentSectionDisplayIndex === -1 || currentMatchedSections.length === 0) {
+        resultsDiv.innerHTML = "<p class='text-center text-gray-500'>ไม่พบข้อมูลที่ตรงกับเงื่อนไขที่ค้นหา</p>";
+      } else {
+        const item = currentMatchedSections[currentSectionDisplayIndex];
+        let fullTextToCopy = `${item.section}\n`;
+        let cardContent = `<div class="section-title font-bold text-blue-800 text-lg mb-2">${item.section}</div>`;
+        
+        
+        item.paragraphs.forEach(p => {
+          let sPara = String(p).trim();
+          sPara = sPara.replace(/\n[ \t]+/g, '\n');
+          // Preserve original text to copy
+          fullTextToCopy += `${sPara}\n`;
+
+          // Detect leading marker like (1), (๒), (ก) ...
+          const m = sPara.match(/^\(([0-9๐-๙A-Za-zก-ฮ]+)\)\s*(.*)$/s);
+          let bodyText = m ? m[2] : sPara;
+
+          // Highlight keyword if needed
+          let paragraphHtml = bodyText;
+          if (lastKeyword && currentSearchMode === 'keyword') {
+            const regex = new RegExp(`(${lastKeyword})`, 'gi');
+            paragraphHtml = bodyText.replace(regex, '<span class="highlight">$1</span>');
+          }
+
+          if (m) {
+            cardContent += `<div class='paragraph hanging text-gray-700'>(${m[1]}) ${paragraphHtml}</div>`;
+          } else {
+            cardContent += `<div class='paragraph text-gray-700'>${paragraphHtml}</div>`;
+          }
+        });
+
+        // Render sub_paragraphs if present
+        if (Array.isArray(item.sub_paragraphs) && item.sub_paragraphs.length > 0) {
+          cardContent += `<div class='sublist'>`;
+          item.sub_paragraphs.forEach(sp => {
+            let sTrim = String(sp).trim();
+            sTrim = sTrim.replace(/\n[ \t]+/g, '\n');
+            fullTextToCopy += `${sTrim}\n`;
+            const sm = sTrim.match(/^\(([0-9๐-๙A-Za-zก-ฮ]+)\)\s*(.*)$/s);
+            let sBody = sm ? sm[2] : sTrim;
+            let sHtml = sBody;
+            if (lastKeyword && currentSearchMode === 'keyword') {
+              const sregex = new RegExp(`(${lastKeyword})`, 'gi');
+              sHtml = sBody.replace(sregex, '<span class="highlight">$1</span>');
+            }
+            if (sm) {
+              cardContent += `<div class='paragraph hanging text-gray-700'>(${sm[1]}) ${sHtml}</div>`;
+            } else {
+              cardContent += `<div class='paragraph text-gray-700'>${sHtml}</div>`;
+            }
+          });
+          cardContent += `</div>`;
+        }
+    resultsDiv.innerHTML = `<div class="flashcard bg-white py-4 px-2 sm:py-6 sm:px-4 rounded-lg shadow-md mb-2 border border-gray-200 relative"><button class="copy-button" onclick="window.copyToClipboard(\`${fullTextToCopy.replace(/`/g, '\\`')}\`)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 1H4C2.895 1 2 1.895 2 3v14h2V3h12V1zm3 4H8C6.895 5 6 5.895 6 7v14c0 1.105.895 2 2 2h11c1.105 0 2-.895 2-2V7c0-1.105-.895-2-2-2zm0 16H8V7h11v14z"/></svg></button>${cardContent}</div>`;
+      }
+
+      if (currentSearchMode === 'section' && currentMatchedSections.length > 0) {
+        sectionNavButtons.style.display = 'flex';
+        document.getElementById('prevSectionBtn').disabled = (currentSectionDisplayIndex === 0);
+        document.getElementById('nextSectionBtn').disabled = (currentSectionDisplayIndex === currentMatchedSections.length - 1);
+        if (isNotePanelVisible) loadNoteForCurrentSection();
+      } else {
+        sectionNavButtons.style.display = 'none';
+        notePanel.classList.add('hidden');
+        isNotePanelVisible = false;
+      }
+    }
+
+    // Displays the previous section in the list
+    window.showPreviousSection = function() {
+      if (currentSectionDisplayIndex > 0) {
+        if (isNotePanelVisible) window.saveNote(false);
+        currentSectionDisplayIndex--;
+        renderSectionDisplay();
+      }
+    }
+
+    // Displays the next section in the list
+    window.showNextSection = function() {
+      if (currentSectionDisplayIndex < currentMatchedSections.length - 1) {
+        if (isNotePanelVisible) window.saveNote(false);
+        currentSectionDisplayIndex++;
+        renderSectionDisplay();
+      }
+    }
+
+    // Main function to execute on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Set global context from URL parameters
+        currentLawType = urlParams.get('lawType');
+        currentLawName = decodeURIComponent(urlParams.get('lawName'));
+        currentSearchMode = urlParams.get('searchMode');
+        const query = decodeURIComponent(urlParams.get('query'));
+        const suffix = urlParams.get('suffix');
+        const openNote = urlParams.get('openNote');
+
+        document.getElementById('resultsTitle').textContent = currentLawName;
+
+        const allSectionsInCurrentLaw = lawData[currentLawType]?.[currentLawName] || [];
+        const sortedSections = allSectionsInCurrentLaw.sort((a, b) => getSectionSortValue(a.section) - getSectionSortValue(b.section));
+
+        if (currentSearchMode === 'section') {
+            let targetSectionQuery = `มาตรา ${query}`;
+            if (suffix) targetSectionQuery += ` ${suffix}`;
+            
+            const foundIndex = findSectionIndexTolerant(sortedSections, targetSectionQuery);
+            
+            if (foundIndex !== -1) {
+                currentMatchedSections = sortedSections;
+                currentSectionDisplayIndex = foundIndex;
+                renderSectionDisplay();
+            } else {
+                document.getElementById("results").innerHTML = "<p class='text-center text-gray-500'>ไม่พบมาตราที่ค้นหา</p>";
+            }
+        } else { // Keyword search
+            lastKeyword = query;
+            const matchedByKeyword = sortedSections.filter(item => 
+                (item.paragraphs && item.paragraphs.some(p => p.includes(lastKeyword))) ||
+                (item.sub_paragraphs && item.sub_paragraphs.some(sp => sp.includes(lastKeyword)))
+            );
+            
+            if (matchedByKeyword.length > 0) {
+                currentMatchedSections = matchedByKeyword;
+                currentSectionDisplayIndex = -1; // Indicate list view, not single item view
+                
+                let html = '';
+                matchedByKeyword.forEach(item => {
+                    let fullTextToCopy = `${item.section}\n`;
+                    let cardContent = `<div class="section-title font-bold text-blue-800 text-lg mb-2">${item.section}</div>`;
+                    item.paragraphs.forEach(p => {
+                        const regex = new RegExp(`(${lastKeyword})`, 'gi');
+                        const paragraphHtml = p.replace(regex, '<span class="highlight">$1</span>');
+                        cardContent += `<div class='paragraph text-gray-700'>${paragraphHtml}</div>`;
+                        fullTextToCopy += `${p}\n`;
+                    });
+                    // Render sub_paragraphs if present
+                    if (Array.isArray(item.sub_paragraphs) && item.sub_paragraphs.length > 0) {
+                        cardContent += `<div class='sublist'>`;
+                        item.sub_paragraphs.forEach(sp => {
+                            const sregex = new RegExp(`(${lastKeyword})`, 'gi');
+                            const sHtml = String(sp).replace(sregex, '<span class="highlight">$1</span>');
+                            // For sub paragraphs we still use hanging style (numbers/letters are in text)
+                            // We'll auto-detect marker but for simplicity display as hanging block
+                            const sm = String(sp).trim().match(/^\(([0-9๐-๙ก-ฮ]+)\)\s*(.*)$/s);
+                            if (sm) {
+                              cardContent += `<div class='paragraph hanging text-gray-700'>(${sm[1]}) ${sm[2].replace(sregex, '<span class="highlight">$1</span>')}</div>`;
+                            } else {
+                              cardContent += `<div class='paragraph text-gray-700'>${sHtml}</div>`;
+                            }
+                            fullTextToCopy += `${sp}\n`;
+                        });
+                        cardContent += `</div>`;
+                    }
+
+                    html += `<div class="flashcard bg-white py-4 px-2 sm:py-6 sm:px-4 rounded-lg shadow-md mb-2 border border-gray-200 relative"><button class="copy-button" onclick="window.copyToClipboard(\`${fullTextToCopy.replace(/`/g, '\\`')}\`)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 1H4C2.895 1 2 1.895 2 3v14h2V3h12V1zm3 4H8C6.895 5 6 5.895 6 7v14c0 1.105.895 2 2 2h11c1.105 0 2-.895 2-2V7c0-1.105-.895-2-2-2zm0 16H8V7h11v14z"/></svg></button>${cardContent}</div>`;
+                });
+                document.getElementById("results").innerHTML = html;
+                document.getElementById("sectionNavButtons").style.display = 'none';
+
+            } else {
+                document.getElementById("results").innerHTML = "<p class='text-center text-gray-500'>ไม่พบข้อมูลที่ตรงกับคำสำคัญที่ค้นหา</p>";
+            }
+        }
+        
+        // Add swipe listeners
+        const resultsView = document.getElementById('resultsView');
+        resultsView.addEventListener('mousedown', handleSwipeStart);
+        resultsView.addEventListener('mousemove', handleSwipeMove);
+        resultsView.addEventListener('mouseup', handleSwipeEnd);
+        resultsView.addEventListener('mouseleave', handleSwipeEnd);
+        resultsView.addEventListener('touchstart', handleSwipeStart);
+        resultsView.addEventListener('touchmove', handleSwipeMove);
+        resultsView.addEventListener('touchend', handleSwipeEnd);
+
+        // Add note editor listener
+        const noteEditor = document.getElementById('noteEditor');
+        noteEditor.addEventListener('input', () => {
+            const noteStatus = document.getElementById('noteStatus');
+            noteStatus.textContent = 'กำลังพิมพ์...';
+            clearTimeout(noteSaveTimeout);
+            noteSaveTimeout = setTimeout(() => { window.saveNote(false); }, 1500);
+        });
+
+        // Open note panel if requested from index page
+        if (openNote === 'true' && currentSectionDisplayIndex !== -1) {
+            toggleNotePanel();
+        }
+    });
+  </script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const titleWrapper = document.getElementById('titleWrapper');
+  const titleBtn = document.getElementById('resultsTitleBtn');
+  const titleTextSpan = document.getElementById('resultsTitleText');
+  const titleDropdown = document.getElementById('titleDropdown');
+
+  // อ่านชื่อกฎหมายจากตัวแปรเดิมถ้ามี
+  try {
+    if (typeof currentLawName !== 'undefined' && currentLawName != null) {
+      titleTextSpan.textContent = String(currentLawName);
+      const legacy = document.getElementById('resultsTitle');
+      if (legacy) legacy.textContent = String(currentLawName);
+    }
+  } catch (e) { /* ignore */ }
+
+  function toggleTitleMenu(forceState) {
+    const willOpen = (typeof forceState === 'boolean') ? forceState : titleDropdown.classList.contains('hidden');
+    if (willOpen) {
+      titleDropdown.classList.remove('hidden');
+      titleWrapper.classList.add('open');
+    } else {
+      titleDropdown.classList.add('hidden');
+      titleWrapper.classList.remove('open');
+    }
+  }
+
+  if (titleBtn) {
+    titleBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      toggleTitleMenu();
+    });
+  }
+
+  if (titleDropdown) {
+    titleDropdown.querySelectorAll('button[data-link]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        var url = e.currentTarget.getAttribute('data-link') || 'https://www.google.com';
+        window.location.href = url;
+      });
+    });
+  }
+
+  document.addEventListener('click', function (e) {
+    if (titleWrapper && !titleWrapper.contains(e.target)) {
+      toggleTitleMenu(false);
+    }
+  });
+});
+</script>
+</body>
+</html>

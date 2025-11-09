@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>สารบาญ ปวิแพ่ง</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap');
+        body {
+            font-family: "Sarabun", sans-serif;
+            background-color: #e0e6eb;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        .container { width: 100%; max-width: 900px; }
+        .icon-btn {
+            background: transparent; border: none; cursor: pointer;
+            padding: .5rem; border-radius: .5rem; transition: background .2s ease;
+        }
+        .icon-btn:hover { background: rgba(0,0,0,.06); }
+        mark { padding: 0 .2em; border-radius: .2em; background: #fff3b0; }
+        .list-item {
+            padding: 0.5rem 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container bg-white rounded-xl shadow-lg p-4" id="formattedBlock">
+    <div class="flex items-center justify-between gap-2">
+        <h1 class="text-lg sm:text-xl font-bold text-gray-800 flex-1 text-center">
+            สารบาญ
+            <p class="font-normal">ประมวลกฎหมายวิธีพิจารณาความแพ่ง</p>
+        </h1>
+        
+        <!-- ปุ่มคัดลอกทั้งหมด -->
+        <button class="icon-btn" id="copyAllBtn" title="คัดลอกข้อความทั้งหมด">
+            <svg fill="#4682B4" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16 1H4C2.895 1 2 1.895 2 3v14h2V3h12V1zm3 4H8C6.895 5 6 5.895 6 7v14c0 1.105.895 2 2 2h11c1.105 0 2-.895 2-2V7c0-1.105-.895-2-2-2zm0 16H8V7h11v14z"></path>
+            </svg>
+        </button>
+        <!-- ปุ่มแว่นขยาย แสดง/ซ่อนช่องค้นหา -->
+        <button class="icon-btn" id="searchToggleBtn" title="ค้นหา">
+            <svg fill="none" height="22" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" x2="16.65" y1="21" y2="16.65"></line>
+            </svg>
+        </button>
+    </div>
+
+    <!-- ช่องค้นหา (ซ่อนเริ่มต้น) -->
+    <div class="hidden mt-3" id="searchContainer">
+        <input class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" id="searchInput" placeholder="พิมพ์คำค้นหา..." type="text"/>
+    </div>
+    
+  <!-- รายการบรรทัด -->
+<p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">​</p><p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>ภาค </strong><strong>๑</strong><strong> บททั่วไป</strong></p><p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>›</strong><strong>ลักษณะ </strong><strong>๑</strong> บทวิเคราะห์ศัพท์ ๑</p><p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>›</strong><strong>ลักษณะ </strong><strong>๒</strong> ศาล</p><p style="margin-left:0.00px;text-indent:48.00px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๑ เขตอำนาจศาล ๒-๑๐</p><p style="margin-left:0.00px;text-indent:48.00px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๒ การคัดค้านผู้พิพากษา ๑๑-๑๔</p><p style="margin-left:0.00px;text-indent:48.00px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๓ อำนาจและหน้าที่ของศาล ๑๕-๓๔</p><p style="margin-left:0.00px;text-indent:48.00px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๔ การนั่งพิจารณา ๓๕-๔๕</p><p style="margin-left:0.00px;text-indent:48.00px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๕ รายงานและสำนวนความ ๔๖-๕๔</p><p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>›</strong><strong>ลักษณะ </strong><strong>๓</strong> คู่ความ ๕๕-๖๖</p><p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>›</strong><strong>ลักษณะ </strong><strong>๔</strong> การยื่นและส่งคำคู่ความและเอกสาร ๖๗-๘๓</p><p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>›</strong><strong>ลักษณะ </strong><strong>๕</strong> พยานหลักฐาน</p><p style="margin-left:0.00px;text-indent:48.00px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๑ หลักทั่วไป ๘๔-๑๐๕</p><p style="margin-left:0.00px;text-indent:48.00px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๒ การมาศาลของพยานและการซักถามพยาน ๑๐๖-๑๒๑</p><p style="margin-left:0.00px;text-indent:48.00px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๓ การนำพยานเอกสารมาสืบ ๑๒๒-๑๒๗</p><p style="margin-left:0.00px;text-indent:48.00px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๔ การตรวจและการแต่งตั้งผู้เชี่ยวชาญโดยศาล ๑๒๘-๑๓๐</p><p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>›</strong><strong>ลักษณะ </strong><strong>๖</strong> คำพิพากษาและคำสั่ง</p><p style="margin-left:0.00px;text-indent:48.00px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๑ หลักทั่วไปว่าด้วยการชี้ขาดตัดสินคดี ๑๓๑-๑๓๙</p><p style="margin-left:0.00px;text-indent:48.00px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๒ ข้อความและผลแห่งคำพิพากษาและคำสั่ง ๑๔๐-๑๔๘</p><p style="margin-left:0.00px;text-indent:48.00px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๓ ค่าฤชาธรรมเนียม</p><p style="margin-left:0.00px;text-indent:48.00px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">ส่วนที่ ๑ ค่าฤชาธรรมเนียมและการดำเนินคดีอนาถา ๑๔๙-๑๖๐</p><p style="margin-left:48.00px;text-indent:48.00px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">ส่วนที่ ๒ ความรับผิดในค่าฤชาธรรมเนียม ๑๖๑-๑๖๙</p><p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>ภาค </strong><strong>๒</strong><strong> วิธีพิจารณาในศาลชั้นต้น</strong></p><p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>›</strong><strong>ลักษณะ </strong><strong>๑</strong> วิธีพิจารณาสามัญในศาลชั้นต้น ๑๗๐-๑๘๘</p><p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>›</strong><strong>ลักษณะ </strong><strong>๒</strong> วิธีพิจารณาสามัญในศาลชั้นต้น</p><p style="margin-left:0.00px;text-indent:48.00px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๑ วิธีพิจารณาคดีมโนสาเร่ ๑๘๙-๑๙๖</p><p style="margin-left:0.00px;text-indent:48.00px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๒ วิธีพิจารณาโดยขาดนัด ๑๙๗-๒๐๙</p><p style="margin-left:0.00px;text-indent:48.00px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๓ อนุญาโตตุลาการ ๒๑๐-๒๒๒</p><p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>ภาค </strong><strong>๓</strong><strong> อุทธรณ์และฎีกา</strong></p><p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>›</strong><strong>ลักษณะ </strong><strong>๑</strong> อุทธรณ์ ๒๒๓-๒๔๖</p><p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>›</strong><strong>ลักษณะ </strong><strong>๒</strong> ฎีกา ๒๔๗-๒๕๒</p><p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>ภาค </strong><strong>๔</strong><strong> วิธีการชั่วคราวก่อนพิพากษาและการบังคับตามคำพิพากษาหรือคำสั่ง</strong></p><p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>›</strong><strong>ลักษณะ </strong><strong>๑</strong> วิธีการชั่วคราวก่อนพิพากษา</p><p style="margin-left:0.00px;text-indent:48.00px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๑ หลักทั่วไป ๒๕๓-๒๖๕</p><p style="margin-left:0.00px;text-indent:48.00px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๒ คำขอในเหตุฉุกเฉิน ๒๖๖-๒๗๐</p><p style="margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap"><strong>›</strong><strong>ลักษณะ </strong><strong>๒</strong> การบังคับตามคำพิพากษาและคำสั่ง</p><p style="margin-left:0.00px;text-indent:48.00px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๑ หลักทั่วไป ๒๗๑-๓๐๒</p><p style="margin-left:0.00px;text-indent:48.00px;margin-top:0.00px;margin-bottom:0.00px;white-space:pre-wrap">หมวด ๒ วิธียึดทรัพย์ อายัด และการจ่ายเงิน ๓๐๓-๓๒๒</p><p style="margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap">​</p>
+    <div class="hidden text-center text-gray-500 py-4" id="noResults">ไม่พบข้อมูลที่ตรงกับคำค้นหา</div>
+</div>
+
+<script>
+    const searchToggleBtn = document.getElementById('searchToggleBtn');
+    const searchContainer = document.getElementById('searchContainer');
+    const searchInput = document.getElementById('searchInput');
+    const formattedBlock = document.getElementById('formattedBlock');
+    const noResults = document.getElementById('noResults');
+    const copyAllBtn = document.getElementById('copyAllBtn');
+    
+    // ฟังก์ชันสำหรับค้นหาและไฮไลต์
+    function filterAndHighlight() {
+        const query = searchInput.value.trim().toLowerCase();
+        const listItems = Array.from(formattedBlock.querySelectorAll('p'));
+        let visibleCount = 0;
+
+        listItems.forEach(item => {
+            const originalText = item.textContent;
+            const itemText = originalText.toLowerCase();
+
+            // ลบไฮไลต์เดิมออก
+            item.innerHTML = originalText;
+
+            // ตรวจสอบว่าตรงกับคำค้นหาหรือไม่
+            if (query === '' || itemText.includes(query)) {
+                item.style.display = '';
+                visibleCount++;
+
+                // ถ้าตรงกัน ให้ไฮไลต์ข้อความ
+                if (query !== '') {
+                    const regex = new RegExp(`(${query})`, 'gi');
+                    item.innerHTML = originalText.replace(regex, '<mark>$1</mark>');
+                }
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        // แสดงข้อความ "ไม่พบข้อมูล" ถ้าไม่มีผลลัพธ์
+        noResults.classList.toggle('hidden', visibleCount > 0);
+    }
+
+    // Toggle ช่องค้นหา
+    searchToggleBtn.addEventListener('click', () => {
+        searchContainer.classList.toggle('hidden');
+        if (!searchContainer.classList.contains('hidden')) {
+            searchInput.focus();
+        } else {
+            searchInput.value = '';
+            filterAndHighlight();
+        }
+    });
+
+    // คัดลอกทั้งหมด
+    function showAlert(msg) {
+        const box = document.createElement('div');
+        box.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4';
+        box.innerHTML = `<div class="bg-white p-6 rounded-lg shadow-lg text-center w-full max-w-sm">
+            <p class="text-lg font-semibold mb-4">${msg}</p>
+            <button class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                    onclick="this.closest('.fixed').remove()">ตกลง</button>
+        </div>`;
+        document.body.appendChild(box);
+    }
+
+    function getAllText() {
+        return formattedBlock.innerText.trim();
+    }
+
+    function copyAll() {
+        const text = getAllText();
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showAlert('คัดลอกข้อความทั้งหมดแล้ว!');
+    }
+    
+    copyAllBtn.addEventListener('click', copyAll);
+    searchInput.addEventListener('input', filterAndHighlight);
+</script>
+
+</body>
+</html>

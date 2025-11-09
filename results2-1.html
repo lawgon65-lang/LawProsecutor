@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>สารบาญ ปวิอาญา</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap');
+        body {
+            font-family: "Sarabun", sans-serif;
+            background-color: #e0e6eb;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        .container { width: 100%; max-width: 900px; }
+        .icon-btn {
+            background: transparent; border: none; cursor: pointer;
+            padding: .5rem; border-radius: .5rem; transition: background .2s ease;
+        }
+        .icon-btn:hover { background: rgba(0,0,0,.06); }
+        mark { padding: 0 .2em; border-radius: .2em; background: #fff3b0; }
+        .list-item {
+            padding: 0.5rem 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container bg-white rounded-xl shadow-lg p-4" id="formattedBlock">
+    <div class="flex items-center justify-between gap-2">
+        <h1 class="text-lg sm:text-xl font-bold text-gray-800 flex-1 text-center">
+            สารบาญ
+            <p class="font-normal">ประมวลกฎหมายวิธีพิจารณาความอาญา</p>
+        </h1>
+        
+        <!-- ปุ่มคัดลอกทั้งหมด -->
+        <button class="icon-btn" id="copyAllBtn" title="คัดลอกข้อความทั้งหมด">
+            <svg fill="#4682B4" height="22" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16 1H4C2.895 1 2 1.895 2 3v14h2V3h12V1zm3 4H8C6.895 5 6 5.895 6 7v14c0 1.105.895 2 2 2h11c1.105 0 2-.895 2-2V7c0-1.105-.895-2-2-2zm0 16H8V7h11v14z"></path>
+            </svg>
+        </button>
+        <!-- ปุ่มแว่นขยาย แสดง/ซ่อนช่องค้นหา -->
+        <button class="icon-btn" id="searchToggleBtn" title="ค้นหา">
+            <svg fill="none" height="22" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" x2="16.65" y1="21" y2="16.65"></line>
+            </svg>
+        </button>
+    </div>
+
+    <!-- ช่องค้นหา (ซ่อนเริ่มต้น) -->
+    <div class="hidden mt-3" id="searchContainer">
+        <input class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" id="searchInput" placeholder="พิมพ์คำค้นหา..." type="text"/>
+    </div>
+    
+  <!-- รายการบรรทัด -->
+<p style="margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>ภาค </strong><strong>๑</strong><strong> ข้อความเบื้องต้น</strong></p><p style="margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>›</strong><strong> </strong><strong>ลักษณะ </strong><strong>๑</strong><strong> หลักทั่วไป</strong><strong> </strong><strong> </strong>๑ - ๑๕</p><p style="margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>›</strong><strong> </strong><strong>ลักษณะ </strong><strong>๒</strong><strong> อำนาจพนักงานสอบสวนและศาล</strong></p><p style="margin-left:0.00px;text-indent:48.00px;margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>หมวด </strong><strong>๑</strong> หลักทั่วไป  ๑๖</p><p style="margin-left:0.00px;text-indent:48.00px;margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>หมวด </strong><strong>๒</strong> อำนาจสืบสวนและ สอบสวน  ๑๗ - ๒๑</p><p style="margin-left:0.00px;text-indent:48.00px;margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>หมวด </strong><strong>๓</strong> อำนาจศาล  ๒๒ - ๒๗</p><p style="margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>›</strong><strong> </strong><strong>ลักษณะ </strong><strong>๓</strong><strong> การฟ้องคดีอาญาและคดีแพ่งที่เกี่ยวเนื่องกับคดีอาญา</strong></p><p style="margin-left:0.00px;text-indent:48.00px;margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>หมวด </strong><strong>๑</strong> การฟ้องคดีอาญา ๒๘ - ๓๙</p><p style="margin-left:0.00px;text-indent:48.00px;margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>หมวด </strong><strong>๒</strong> การฟ้องคดีแพ่งที่เกี่ยวเนื่องกับคดีอาญา ๔๐ - ๕๑</p><p style="margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>›</strong><strong> </strong><strong>ลักษณะ </strong><strong>๔</strong><strong> หมายเรียกและหมายอาญา</strong></p><p style="margin-left:0.00px;text-indent:48.00px;margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>หมวด </strong><strong>๑</strong> หมายเรียก ๕๒ - ๕๖</p><p style="margin-left:0.00px;text-indent:48.00px;margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>หมวด </strong><strong>๒</strong> หมายอาญา</p><p style="margin-left:48.00px;text-indent:48.00px;margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>ส่วนที่ </strong><strong>๑</strong> หลักทั่วไป ๕๗ - ๖๕</p><p style="margin-left:48.00px;text-indent:48.00px;margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>ส่วนที่ </strong><strong>๒</strong> หมายจับ ๖๖ - ๖๘</p><p style="margin-left:48.00px;text-indent:48.00px;margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>ส่วนที่ </strong><strong>๓</strong> หมายค้น ๖๙ - ๗๐</p><p style="margin-left:48.00px;text-indent:48.00px;margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>ส่วนที่ </strong><strong>๔</strong> หมายขัง หมาย จำคุก หมายปล่อย ๗๑ - ๗๖</p><p style="margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>›</strong><strong> </strong><strong>ลักษณะ </strong><strong>๕</strong><strong> จับ ขัง จำคุก ค้น ปล่อยชั่วคราว</strong></p><p style="margin-left:0.00px;text-indent:48.00px;margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>หมวด </strong><strong>๑</strong> จับ ขัง จำคุก ๗๗ - ๙๐</p><p style="margin-left:0.00px;text-indent:48.00px;margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>หมวด </strong><strong>๒</strong> ค้น ๙๑ - ๑๐๕</p><p style="margin-left:0.00px;text-indent:48.00px;margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>หมวด </strong><strong>๓</strong> ปล่อยชั่วคราว ๑๐๖ – ๑๑๙</p><p style="margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>ภาค </strong><strong>๒</strong><strong> สอบสวน</strong></p><p style="margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>›</strong><strong> </strong><strong>ลักษณะ </strong><strong>๑</strong><strong> หลักทั่วไป</strong><strong> </strong>๑๒๐ - ๑๒๙</p><p style="margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>›</strong><strong> </strong><strong>ลักษณะ </strong><strong>๒</strong><strong> การสอบสวน</strong></p><p style="margin-left:0.00px;text-indent:48.00px;margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>หมวด </strong><strong>๑</strong> การสอบสวนสามัญ ๑๓๐ - ๑๔๗</p><p style="margin-left:0.00px;text-indent:48.00px;margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>หมวด </strong><strong>๒</strong> การชันสูตรพลิกศพ ๑๔๘ - ๑๕๖</p><p style="margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>ภาค </strong><strong>๓</strong><strong> วิธีพิจารณาในศาลชั้นต้น</strong></p><p style="margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>›</strong><strong> </strong><strong>ลักษณะ </strong><strong>๑</strong><strong> ฟ้องคดีอาญาและไต่สวนมูลฟ้อง</strong> ๑๕๗ - ๑๗๑</p><p style="margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>›</strong><strong> </strong><strong>ลักษณะ </strong><strong>๒</strong><strong> การพิจารณา</strong> ๑๗๒ - ๑๘๑</p><p style="margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>›</strong><strong> </strong><strong>ลักษณะ </strong><strong>๓</strong><strong> คำพิพากษาและคำสั่ง</strong> ๑๘๒ – ๑๙๒</p><p style="margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap">​</p><p style="margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>ภาค </strong><strong>๔</strong><strong> อุทธรณ์และฎีกา</strong></p><p style="margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>›</strong><strong> </strong><strong>ลักษณะ </strong><strong>๑</strong><strong> อุทธรณ์</strong></p><p style="margin-left:0.00px;text-indent:48.00px;margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>หมวด </strong><strong>๑</strong> หลักทั่วไป ๑๙๓ - ๒๐๒</p><p style="margin-left:0.00px;text-indent:48.00px;margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>หมวด </strong><strong>๒</strong> การพิจารณา คำพิพากษา และคำสั่งชั้นอุทธรณ์ ๒๐๓ - ๒๑๕</p><p style="margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>›</strong><strong> </strong><strong>ลักษณะ </strong><strong>๒</strong><strong> ฎีกา</strong></p><p style="margin-left:0.00px;text-indent:48.00px;margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>หมวด </strong><strong>๑</strong> หลักทั่วไป ๒๑๖ - ๒๒๔</p><p style="margin-left:0.00px;text-indent:48.00px;margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>หมวด </strong><strong>๒</strong> การพิจารณา คำพิพากษาและคำสั่งชั้นฎีกา ๒๒๕ </p><p style="margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>ภาค </strong><strong>๕</strong><strong> พยานหลักฐาน</strong></p><p style="margin-left:0.00px;text-indent:48.00px;margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>หมวด </strong><strong>๑</strong> หลักทั่วไป ๒๒๖ - ๒๓๑</p><p style="margin-left:0.00px;text-indent:48.00px;margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>หมวด </strong><strong>๒</strong> พยานบุคคล ๒๓๒ - ๒๓๗</p><p style="margin-left:48.00px;margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>หมวด </strong><strong>๓</strong> พยานเอกสาร ๒๓๘ - ๒๔๐</p><p style="margin-left:48.00px;margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>หมวด </strong><strong>๔</strong> พยานวัตถุ ๒๔๑ - ๒๔๒</p><p style="margin-left:48.00px;margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>หมวด </strong><strong>๕</strong> ผู้ชำนาญการพิเศษ ๒๔๓ - ๒๔๔</p><p style="margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>ภาค </strong><strong>๖</strong><strong> การบังคับตามคำพิพากษาและค่าธรรมเนียม</strong></p><p style="margin-left:0.00px;text-indent:48.00px;margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>หมวด </strong><strong>๑</strong> การบังคับตามคำพิพากษา ๒๔๕ - ๒๕๑</p><p style="margin-left:0.00px;text-indent:48.00px;margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>หมวด </strong><strong>๒</strong> ค่าธรรมเนียม ๒๕๒ - ๒๕๘</p><p style="margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap"><strong>ภาค </strong><strong>๗</strong><strong> อภัยโทษ เปลี่ยนโทษหนักเป็นเบาและลดโทษ</strong> ๒๕๙ – ๒๖๗</p><p style="margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap">​</p><p style="margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap">​</p><p style="margin-bottom:0.00px;margin-top:4px;white-space:pre-wrap">​</p>
+
+    <div class="hidden text-center text-gray-500 py-4" id="noResults">ไม่พบข้อมูลที่ตรงกับคำค้นหา</div>
+</div>
+
+<script>
+    const searchToggleBtn = document.getElementById('searchToggleBtn');
+    const searchContainer = document.getElementById('searchContainer');
+    const searchInput = document.getElementById('searchInput');
+    const formattedBlock = document.getElementById('formattedBlock');
+    const noResults = document.getElementById('noResults');
+    const copyAllBtn = document.getElementById('copyAllBtn');
+    
+    // ฟังก์ชันสำหรับค้นหาและไฮไลต์
+    function filterAndHighlight() {
+        const query = searchInput.value.trim().toLowerCase();
+        const listItems = Array.from(formattedBlock.querySelectorAll('p'));
+        let visibleCount = 0;
+
+        listItems.forEach(item => {
+            const originalText = item.textContent;
+            const itemText = originalText.toLowerCase();
+
+            // ลบไฮไลต์เดิมออก
+            item.innerHTML = originalText;
+
+            // ตรวจสอบว่าตรงกับคำค้นหาหรือไม่
+            if (query === '' || itemText.includes(query)) {
+                item.style.display = '';
+                visibleCount++;
+
+                // ถ้าตรงกัน ให้ไฮไลต์ข้อความ
+                if (query !== '') {
+                    const regex = new RegExp(`(${query})`, 'gi');
+                    item.innerHTML = originalText.replace(regex, '<mark>$1</mark>');
+                }
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        // แสดงข้อความ "ไม่พบข้อมูล" ถ้าไม่มีผลลัพธ์
+        noResults.classList.toggle('hidden', visibleCount > 0);
+    }
+
+    // Toggle ช่องค้นหา
+    searchToggleBtn.addEventListener('click', () => {
+        searchContainer.classList.toggle('hidden');
+        if (!searchContainer.classList.contains('hidden')) {
+            searchInput.focus();
+        } else {
+            searchInput.value = '';
+            filterAndHighlight();
+        }
+    });
+
+    // คัดลอกทั้งหมด
+    function showAlert(msg) {
+        const box = document.createElement('div');
+        box.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4';
+        box.innerHTML = `<div class="bg-white p-6 rounded-lg shadow-lg text-center w-full max-w-sm">
+            <p class="text-lg font-semibold mb-4">${msg}</p>
+            <button class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                    onclick="this.closest('.fixed').remove()">ตกลง</button>
+        </div>`;
+        document.body.appendChild(box);
+    }
+
+    function getAllText() {
+        return formattedBlock.innerText.trim();
+    }
+
+    function copyAll() {
+        const text = getAllText();
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showAlert('คัดลอกข้อความทั้งหมดแล้ว!');
+    }
+    
+    copyAllBtn.addEventListener('click', copyAll);
+    searchInput.addEventListener('input', filterAndHighlight);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ผลลัพธ์การค้นหา</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom styles -->
+  <style>
+    /* Custom font - Sarabun */
+    @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap');
+    body {
+      font-family: "Sarabun", sans-serif;
+      background-color: #e0e6eb;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 0.5rem; /* Adjusted padding for smaller screens */
+    }
+    .container {
+      width: 100%;
+      max-width: 800px;
+    }
+    .flashcard {
+      text-indent: 1.5em; /* Slightly reduced indent */
+      font-size: 0.9rem; /* Adjusted base font size for mobile */
+      position: relative;
+      padding-top: 0;
+      margin-bottom: 0.5rem;
+    }
+    .flashcard .paragraph { text-indent: var(--para-indent); white-space: pre-line; margin: 0; }
+    .highlight {
+      background-color: #FFFF00;
+      font-weight: bold;
+    }
+    .copy-button {
+      position: absolute;
+      top: 0.5rem; /* Adjusted position */
+      right: 0.5rem; /* Adjusted position */
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 0.375rem;
+      transition: background-color 0.3s ease;
+      z-index: 10;
+    }
+    .copy-button:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+    .copy-button svg {
+      fill: #4682B4;
+      width: 24px;
+      height: 24px;
+    }
+    .nav-button {
+      background-color: transparent;
+      color: #4A5568;
+      padding: 0.5rem; /* Adjusted padding */
+      border-radius: 0.5rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease, opacity 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px; /* Adjusted size */
+      height: 44px; /* Adjusted size */
+      border: none;
+    }
+    .nav-button:hover:not(:disabled) {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+    .nav-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .nav-button svg {
+      width: 22px; /* Adjusted icon size */
+      height: 22px; /* Adjusted icon size */
+      stroke: currentColor;
+      fill: none;
+    }
+    .note-panel {
+      background-color: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      margin-top: 0.5rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    #noteEditor {
+      width: 100%;
+      min-height: 120px;
+      padding: 0.75rem;
+      border: 1px solid #d1d5db;
+      border-top: none;
+      border-radius: 0 0 0.375rem 0.375rem;
+      resize: vertical;
+      font-family: "Sarabun", sans-serif;
+      font-size: 0.9rem;
+      overflow-y: auto;
+    }
+    #noteEditor:focus {
+        outline: none;
+        border-color: #3B82F6;
+    }
+    .toolbar-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 0.25rem;
+        transition: background-color 0.2s ease-in-out;
+    }
+    .toolbar-btn:hover {
+        background-color: #e5e7eb;
+    }
+    .toolbar-btn svg {
+        stroke: #374151;
+    }
+  
+    /* === Paragraph indent styling for law text === */
+    :root { --para-indent: 4em;   --marker-indent: 2.2em;
+} /* adjust to increase/decrease indent */
+
+    .flashcard .paragraph { text-indent: var(--para-indent); white-space: pre-line; margin: 0; }
+    /* Hanging indent for items like (1) (2) ... */
+    .flashcard .paragraph.hanging { text-indent: calc(var(--para-indent) - var(--marker-indent)); padding-left: var(--marker-indent); }
+    .flashcard .paragraph.hanging .lead { display: none; }
+
+    /* Nested sub-paragraphs styling */
+    .sublist .paragraph { text-indent: var(--para-indent); }
+    .sublist .paragraph.hanging { margin-left: var(--para-indent); text-indent: calc(-1 * var(--marker-indent)); padding-left: var(--marker-indent); }
+    .sublist .paragraph.hanging .lead { display: none; }
+
+/* --- Override for sub_paragraphs: first-line indent; wrapped lines flush left --- */
+.sublist .paragraph { text-indent: var(--para-indent); white-space: pre-line; margin: 0; }
+.sublist .paragraph.hanging { text-indent: var(--para-indent) !important; padding-left: 0 !important; }
+.sublist .paragraph.hanging .lead { display: none !important; }
+
+/* === Sub-paragraph layout: first-line indent aligned with normal paragraphs,
+   continuation lines outdented ~6–7 characters to the left === */
+:root { --outdent: 0.1ch; }  /* tweak to 6ch or 7ch as desired */
+
+.sublist .paragraph {
+  /* Pull the whole block to the left by --outdent */
+  margin-left: calc(-1 * var(--outdent));
+  /* Push first line back to align its '(' exactly with normal paragraph indent */
+  text-indent: calc(var(--para-indent) + var(--outdent));
+  white-space: pre-line;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* Treat 'hanging' same as normal in sublist (we render marker inline e.g. "(1) ...") */
+.sublist .paragraph.hanging {
+  margin-left: calc(-1 * var(--outdent)) !important;
+  text-indent: calc(var(--para-indent) + var(--outdent)) !important;
+  padding-left: 0 !important;
+}
+.sublist .paragraph.hanging .lead { display: none !important; }
+
+/* หมุน caret เมื่อเปิดเมนู */
+.open #titleCaret { transform: rotate(180deg); }
+
+</style>
+</head>
+<body>
+  <div id="resultsView" class="container bg-white rounded-xl shadow-lg p-2 sm:p-4">
+      <div class="flex items-center justify-between mb-0">
+        <!-- MODIFIED: Changed the icon from a chevron to a magnifying glass -->
+        <button class="nav-button" onclick="window.location.href='index.html'" title="กลับไปหน้าค้นหา">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </button>
+        <div id="titleWrapper" class="relative flex-grow px-2">
+  <button id="resultsTitleBtn"
+          class="w-full text-lg sm:text-xl font-bold text-gray-800 text-center flex items-center justify-center gap-2 select-none">
+    <span id="resultsTitleText">ผลลัพธ์การค้นหา</span>
+    <svg id="titleCaret" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transition-transform"
+         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  </button>
+
+  <!-- เมนูดรอปดาวน์ -->
+  <div id="titleDropdown"
+       class="hidden absolute left-1/2 -translate-x-1/2 mt-2 w-50 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+    <button data-link="results6-1.html"
+            class="block w-full text-left px-3 py-2 hover:bg-gray-100">สารบาญฯ
+</button>
+          </div>
+  <!-- element ซ่อน เพื่อให้สคริปต์เก่าที่อาจอ้างอิง #resultsTitle ไม่พัง -->
+  <span id="resultsTitle" class="hidden"></span>
+</div>
+        <div class="w-12"></div> <!-- Spacer -->
+      </div>
+      
+      <div id="sectionNavButtons" class="flex justify-between my-1 px-2 sm:px-4" style="display: none;">
+        <button class="nav-button" id="prevSectionBtn" onclick="window.showPreviousSection()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/></svg>
+        </button>
+        <button class="nav-button" id="noteButton" onclick="window.toggleNotePanel()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"/><circle cx="12" cy="12" r="10"/></svg>
+        </button>
+        <button class="nav-button" id="nextSectionBtn" onclick="window.showNextSection()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 17 5-5-5-5"/><path d="m13 17 5-5-5-5"/></svg>
+        </button>
+      </div>
+
+      <div id="results" class="result text-gray-600 p-1 sm:p-2">
+        <p class="text-center text-gray-500">กำลังโหลดผลลัพธ์...</p>
+      </div>
+
+      <div id="notePanel" class="note-panel hidden p-2 sm:p-4">
+        <p class="text-gray-700 text-sm font-semibold mb-2">โน้ตย่อ:</p>
+        <div id="noteToolbar" class="flex items-center justify-end flex-wrap gap-2 p-2 bg-gray-100 rounded-t-lg border border-gray-300">
+            <button onclick="window.formatDoc('bold')" class="toolbar-btn font-bold">B</button>
+            <button onclick="window.formatDoc('italic')" class="toolbar-btn italic">I</button>
+            <button onclick="window.formatDoc('underline')" class="toolbar-btn underline">U</button>
+            <button onclick="window.saveNote(true)" class="toolbar-btn" title="บันทึกโน้ต">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                    <polyline points="17 21 17 13 7 13 7 21"/>
+                    <polyline points="7 3 7 8 15 8"/>
+                </svg>
+            </button>
+        </div>
+        <div id="noteEditor" contenteditable="true"></div>
+        <p id="noteStatus" class="text-xs text-gray-500 mt-2"></p>
+  </div>
+  </div>
+
+  <script>
+    // Flag to check if the note panel is visible
+    let isNotePanelVisible = false;
+    // Timeout for auto-saving notes
+    let noteSaveTimeout = null;
+
+    // In-memory data store for laws
+    const lawData = {
+      "act": {        
+       "พ.ร.บ.จัดตั้งศาลแขวงและวิธีพิจารณาความอาญาในศาลแขวง พ.ศ.๒๔๙๙": [
+   {
+
+         "section": "มาตรา 1",
+    "paragraphs": [
+      "        มาตรา 1 พระราชบัญญัตินี้เรียกว่า “พระราชบัญญัติจัดตั้งศาลแขวงและวิธีพิจารณาความอาญาในศาลแขวง พ.ศ. 2499”"
+    ]
+  },
+  {
+    "section": "มาตรา 2",
+    "paragraphs": [
+      "        มาตรา 2  พระราชบัญญัตินี้ให้ใช้บังคับเมื่อพ้นหกสิบวันนับแต่วันประกาศในราชกิจจานุเบกษาเป็นต้นไป"
+    ]
+  },
+  {
+    "section": "มาตรา 3",
+    "paragraphs": [
+      "        มาตรา 3 ให้ตั้งศาลแขวงตามกฎหมายว่าด้วยพระธรรมนูญศาลยุติธรรมขึ้นในทุกจังหวัด ในจังหวัดหนึ่งจะมีศาลแขวงกี่ศาล และมีเขตอำนาจเพียงใด และจะเปิดทำการได้เมื่อใด ให้ประกาศโดยพระราชกฤษฎีกา",
+      "        ศาลแขวงที่ได้ตั้งขึ้นก่อนวันที่พระราชบัญญัตินี้ใช้บังคับให้คงมีอยู่ต่อไป และมีอำนาจหน้าที่ตามพระราชบัญญัตินี้",
+      "        การเปลี่ยนแปลงเขตอำนาจศาลแขวง ให้ประกาศโดยพระราชกฤษฎีกา"
+    ]
+  },
+  {
+    "section": "มาตรา 4",
+    "paragraphs": [
+      "        มาตรา 4  ให้นำวิธีพิจารณาความอาญาตามบทบัญญัติแห่งพระราชบัญญัตินี้มาใช้บังคับในศาลแขวง แต่ในกรณีที่ไม่มีบทบัญญัติในพระราชบัญญัตินี้บังคับ ให้คงใช้กฎหมายว่าด้วยพระธรรมนูญศาลยุติธรรม กฎหมายว่าด้วยวิธีพิจารณาความอาญา กฎหมายว่าด้วยวิธีพิจารณาความแพ่งบังคับ แต่ทั้งนี้ไม่กระทบกระเทือนกฎหมายว่าด้วยการจัดตั้งศาลคดีเด็กและเยาวชนและกฎหมายว่าด้วยวิธีพิจารณาคดีเด็กและเยาวชน"
+    ]
+  },
+  {
+    "section": "มาตรา 5",
+    "paragraphs": [
+      "        มาตรา 5  (ยกเลิก)"
+    ]
+  },
+  {
+    "section": "มาตรา 6",
+    "paragraphs": [
+      "        มาตรา 6  (ยกเลิก)"
+    ]
+  },
+  {
+    "section": "มาตรา 7",
+    "paragraphs": [
+      "        มาตรา 7  ในการสอบสวนคดีอาญาที่อยู่ในอำนาจศาลแขวงที่จะพิจารณาพิพากษาได้ เมื่อมีการจับตัวผู้ต้องหาแล้ว ให้พนักงานสอบสวนผู้รับผิดชอบส่งตัวผู้ต้องหาพร้อมด้วยสำนวนการสอบสวนไปยังพนักงานอัยการ เพื่อให้พนักงานอัยการยื่นฟ้องต่อศาลแขวงให้ทันภายในกำหนดเวลาสี่สิบแปดชั่วโมงนับแต่เวลาที่ผู้ต้องหาถูกจับ แต่มิให้นับเวลาเดินทางตามปกติที่นำตัวผู้ต้องหาจากที่จับมายังที่ทำการของพนักงานสอบสวน จากที่ทำการของพนักงานสอบสวนหรือจากที่ทำการของพนักงานอัยการมาศาลเข้าในกำหนดเวลาสี่สิบแปดชั่วโมงนั้นด้วย",
+      "        ในกรณีที่ไม่มีการจับแต่พนักงานสอบสวนได้แจ้งข้อหาแก่ผู้ต้องหาแล้ว ให้พนักงานสอบสวนผู้รับผิดชอบส่งสำนวนการสอบสวนไปยังพนักงานอัยการพร้อมกับสั่งให้ผู้ต้องหาไปพบพนักงานอัยการเพื่อให้พนักงานอัยการยื่นฟ้องต่อศาลแขวงให้ทันภายในกำหนดเวลาสี่สิบแปดชั่วโมงนับแต่เวลาที่ผู้ต้องหาได้รับแจ้งข้อหา แต่มิให้นับเวลาเดินทางตามปกติจากที่ทำการของพนักงานสอบสวนหรือจากที่ทำการของพนักงานอัยการมาศาลเข้าในกำหนดเวลาสี่สิบแปดชั่วโมงนั้นด้วย",
+      "        ในกรณีที่เกิดความจำเป็นไม่สามารถฟ้องผู้ต้องหาต่อศาลให้ทันภายในกำหนดเวลาดังกล่าวในวรรคหนึ่งหรือวรรคสอง ให้พนักงานสอบสวนหรือพนักงานอัยการ แล้วแต่กรณี ยื่นคำร้องต่อศาลเพื่อขอผัดฟ้องต่อไปได้อีกคราวละไม่เกินหกวัน แต่ทั้งนี้ต้องไม่เกินสามคราว ในการวินิจฉัยคำร้องเช่นว่านี้ ถ้ามีการขอให้ขังผู้ต้องหาด้วยหรือผู้ต้องหาแสดงตัวต่อศาล ให้ศาลสอบถามผู้ต้องหาว่าจะมีข้อคัดค้านประการใดหรือไม่ และศาลอาจเรียกพนักงานสอบสวนหรือพนักงานอัยการมาชี้แจงเหตุจำเป็น หรืออาจเรียกพยานมาเบิกความประกอบก็ได้",
+      "        เมื่อศาลสั่งอนุญาตให้ผัดฟ้องครบสามคราวแล้ว หากพนักงานสอบสวนหรือพนักงานอัยการยื่นคำร้องต่อศาลเพื่อขอผัดฟ้องต่อไปอีกโดยอ้างเหตุจำเป็น ศาลจะอนุญาตตามขอนั้นได้ก็ต่อเมื่อพนักงานสอบสวนหรือพนักงานอัยการได้แสดงถึงเหตุจำเป็นและนำพยานมาเบิกความประกอบจนเป็นที่พอใจแก่ศาล ถ้ามีการขอให้ขังผู้ต้องหาด้วยหรือผู้ต้องหาแสดงตัวต่อศาล ให้ศาลสอบถามผู้ต้องหาว่าจะมีข้อคัดค้านประการใดหรือไม่ ในกรณีเช่นว่านี้ ศาลมีอำนาจสั่งอนุญาตให้ผัดฟ้องต่อไปได้คราวละไม่เกินหกวัน แต่ทั้งนี้ต้องไม่เกินสองคราว",
+      "        ผู้ต้องหาจะแต่งทนายความเพื่อแถลงข้อคัดค้านและซักถามพยานก็ได้",
+      "        ในระหว่างการสอบสวนของพนักงานสอบสวน หากผู้ต้องหาซึ่งถูกแจ้งข้อหาได้หลบหนีไป ให้พนักงานสอบสวนผู้รับผิดชอบทำการสอบสวนต่อไปโดยเร็ว และถ้าการสอบสวนได้เสร็จสิ้นลงแล้ว ให้พนักงานสอบสวนผู้รับผิดชอบส่งสำนวนการสอบสวนไปยังพนักงานอัยการเพื่อพิจารณาสั่งต่อไป โดยให้นำมาตรา 141 แห่งประมวลกฎหมายวิธีพิจารณาความอาญา มาใช้บังคับโดยอนุโลม ในกรณีที่ระยะเวลาการขอผัดฟ้องตามมาตรานี้ได้สิ้นสุดลงในระหว่างที่ผู้ต้องหาหลบหนี และพนักงานอัยการมีคำสั่งฟ้อง พนักงานอัยการอาจขออนุญาตฟ้องคดีต่ออัยการสูงสุดตามมาตรา 9 ไว้ก่อนก็ได้"
+    ]
+  },
+  {
+    "section": "มาตรา 7 ทวิ",
+    "paragraphs": [
+      "        มาตรา 7 ทวิ  ในกรณีที่ผู้ต้องหาหลบหนีจากการควบคุมหรือการขัง มิให้นับระยะเวลาที่ผู้ต้องหาหลบหนีนั้นเข้าในกำหนดระยะเวลาที่บัญญัติไว้ในมาตรา 7",
+      "        ในกรณีที่ได้มีการส่งตัวผู้ต้องหาไปดำเนินคดียังศาลทหารหรือศาลคดีเด็กและเยาวชน หากปรากฏในภายหลังว่าผู้ต้องหาไม่ได้อยู่ในอำนาจของศาลทหารหรือศาลคดีเด็กและเยาวชน ตามกฎหมายว่าด้วยธรรมนูญศาลทหารหรือตามกฎหมายว่าด้วยวิธีพิจารณาคดีเด็กและเยาวชน แล้วแต่กรณี และมีการส่งตัวผู้ต้องหามายังพนักงานสอบสวนเพื่อดำเนินคดีในศาลแขวงต่อไปนั้น มิให้นับระยะเวลาที่ผู้ต้องหาถูกควบคุมตัวหรือขังอยู่ตามกฎหมายดังกล่าวนั้นเข้าในกำหนดระยะเวลาดังบัญญัติไว้ในมาตรา 7"
+    ]
+  },
+  {
+    "section": "มาตรา 8",
+    "paragraphs": [
+      "        มาตรา 8  ในคดีอาญาที่อยู่ในอำนาจศาลแขวงที่จะพิจารณาพิพากษาได้นั้น การควบคุมตัวผู้ต้องหาให้เป็นไปตามกฎหมายว่าด้วยวิธีพิจารณาความอาญา แต่กรณีจะเป็นอย่างไรก็ตาม พนักงานฝ่ายปกครองหรือตำรวจจะควบคุมตัวผู้ต้องหาไว้เกินกว่ากำหนดเวลาดังกล่าวในมาตรา 7 วรรคหนึ่ง มิได้",
+      "        ถ้าผู้ต้องหาอยู่ในความควบคุมของพนักงานฝ่ายปกครองหรือตำรวจ ให้พนักงานสอบสวนหรือพนักงานอัยการ แล้วแต่กรณี นำตัวผู้ต้องหามาส่งศาลพร้อมกับการยื่นคำร้องขอผัดฟ้อง และขอให้ศาลออกหมายขังผู้ต้องหาไว้ แต่ถ้าผู้ต้องหาป่วยอยู่ในสภาพที่ไม่อาจนำมาศาลได้ ให้พนักงานสอบสวนหรือพนักงานอัยการขออนุญาตศาลรวมมาในคำขอให้ศาลออกหมายขังผู้ต้องหา โดยมีพยานหลักฐานประกอบจนเป็นที่พอใจแก่ศาลในเหตุที่ไม่อาจนำตัวผู้ต้องหามาศาลได้ ในกรณีที่ศาลสั่งอนุญาตให้ผัดฟ้อง ให้ศาลออกหมายขังผู้ต้องหาเท่ากับระยะเวลาที่ศาลอนุญาตให้ผัดฟ้องนั้น",
+      "        ในกรณีที่ผู้ต้องหาตกอยู่ในความควบคุมของพนักงานฝ่ายปกครองหรือตำรวจหลังจากที่ศาลอนุญาตให้ผัดฟ้องแล้ว ให้พนักงานสอบสวนหรือพนักงานอัยการนำตัวผู้ต้องหามาส่งศาลในโอกาสแรกที่จะส่งได้เพื่อขอให้ศาลออกหมายขังผู้ต้องหาไว้ ให้ศาลออกหมายขังผู้ต้องหาเท่ากับระยะเวลาที่ศาลอนุญาตให้ผัดฟ้อง",
+      "        คำขอให้ศาลออกหมายขังผู้ต้องหาจะขอรวมมาในคำร้องขอผัดฟ้องก็ได้ ในกรณีที่ศาลเห็นสมควรศาลจะมีคำสั่งให้ส่งตัวผู้ต้องหาไปอยู่ในความควบคุมของพนักงานฝ่ายปกครองหรือตำรวจตามเดิมก็ได้ กรณีจะเป็นอย่างไรก็ตาม ศาลจะออกหมายขังผู้ต้องหาหรือมีคำสั่งให้ส่งตัวผู้ต้องหาไปอยู่ในความควบคุมของพนักงานฝ่ายปกครองหรือตำรวจเกินกว่าเวลาที่กฎหมายว่าด้วยวิธีพิจารณาความอาญากำหนดไว้มิได้",
+      "        ถ้าผู้ต้องหาไม่ได้อยู่ในความควบคุมของพนักงานฝ่ายปกครองหรือตำรวจ แต่พนักงานสอบสวนได้สั่งให้ผู้ต้องหาไปศาลเพื่อขอออกหมายขังตามมาตรา 134 วรรคห้า แห่งประมวลกฎหมายวิธีพิจารณาความอาญา ให้พนักงานสอบสวนหรือพนักงานอัยการ แล้วแต่กรณี ยื่นคำร้องขอผัดฟ้องพร้อมกับขอให้ศาลออกหมายขังผู้ต้องหาไว้ และให้นำมาตรา 7 วรรคสาม วรรคสี่ และวรรคห้า มาใช้บังคับโดยอนุโลม ในกรณีที่ศาลสั่งอนุญาตให้ผัดฟ้องให้ศาลออกหมายขังผู้ต้องหาเท่ากับระยะเวลาที่ศาลอนุญาตให้ผัดฟ้อง แต่ถ้าการขอให้ออกหมายขังดังกล่าวกระทำภายหลังจากที่ศาลมีคำสั่งอนุญาตให้ผัดฟ้องแล้ว ให้ศาลออกหมายขังผู้ต้องหาได้เท่ากับระยะเวลาที่ศาลอนุญาตให้ผัดฟ้อง",
+      "        บทบัญญัติในมาตรานี้ไม่กระทบกระทั่งอำนาจของศาลที่จะสั่งให้ปล่อยตัวผู้ต้องหาชั่วคราว"
+    ]
+  },
+  {
+    "section": "มาตรา 9",
+    "paragraphs": [
+      "        มาตรา 9  ห้ามมิให้พนักงานอัยการฟ้องคดีเมื่อพ้นกำหนดระยะเวลาตามมาตรา 7 เว้นแต่จะได้รับอนุญาตจากอัยการสูงสุด หรือพนักงานอัยการผู้มีตำแหน่งไม่ต่ำกว่าอธิบดีอัยการหรืออธิบดีอัยการภาค ซึ่งอัยการสูงสุดมอบหมาย ทั้งนี้ ให้พนักงานอัยการผู้ได้รับมอบหมายรายงานผลการดำเนินการดังกล่าวให้อัยการสูงสุดทราบด้วย",
+      "        การขออนุญาตและการอนุญาตตามวรรคหนึ่ง ให้เป็นไปตามหลักเกณฑ์ วิธีการและเงื่อนไขที่กำหนดในข้อบังคับของอัยการสูงสุด"
+    ]
+  },
+  {
+    "section": "มาตรา 10",
+    "paragraphs": [
+      "        มาตรา 10  (ยกเลิก)"
+    ]
+  },
+  {
+    "section": "มาตรา 11",
+    "paragraphs": [
+      "        มาตรา 11  (ยกเลิก)"
+    ]
+  },
+  {
+    "section": "มาตรา 12",
+    "paragraphs": [
+      "        มาตรา 12  ในคดีอาญาที่อยู่ในอำนาจศาลแขวงที่จะพิจารณาพิพากษาได้ ในกรณีที่มีคำสั่งไม่ฟ้อง และคำสั่งนั้นไม่ใช่ของอธิบดีกรมอัยการ ถ้าในกรุงเทพมหานคร ให้รีบส่งสำนวนการสอบสวนพร้อมกับคำสั่งเสนออธิบดีกรมตำรวจ รองอธิบดีกรมตำรวจหรือผู้ช่วยอธิบดีกรมตำรวจ ถ้าในจังหวัดอื่นให้รีบส่งสำนวนการสอบสวนพร้อมกับคำสั่งเสนอผู้ว่าราชการจังหวัด แต่ทั้งนี้มิได้ตัดอำนาจพนักงานอัยการที่จะจัดการปล่อยผู้ต้องหา ปล่อยชั่วคราว ควบคุมไว้ หรือขอให้ศาลขัง แล้วแต่กรณี และจัดการหรือสั่งการให้เป็นไปตามนั้น",
+      "        ในกรณีที่อธิบดีกรมตำรวจ รองอธิบดีกรมตำรวจหรือผู้ช่วยอธิบดีกรมตำรวจในกรุงเทพมหานคร หรือผู้ว่าราชการจังหวัดในจังหวัดอื่น แย้งคำสั่งของพนักงานอัยการ ให้ส่งสำนวนพร้อมกับความเห็นที่แย้งกันไปยังอธิบดีกรมอัยการเพื่อชี้ขาด แต่ถ้าคดีจะขาดอายุความ หรือมีเหตุอย่างอื่นอันจำเป็นจะต้องรีบฟ้อง ก็ให้ฟ้องคดีนั้นตามความเห็นของอธิบดีกรมตำรวจ รองอธิบดีกรมตำรวจ ผู้ช่วยอธิบดีกรมตำรวจหรือผู้ว่าราชการจังหวัดไปก่อน",
+      "        บทบัญญัติในมาตรานี้ ให้นำมาบังคับในการที่พนักงานอัยการจะไม่อุทธรณ์ ไม่ฎีกาหรือถอนฟ้อง ถอนอุทธรณ์และถอนฎีกา โดยอนุโลม"
+    ]
+  },
+  {
+    "section": "มาตรา 13",
+    "paragraphs": [
+      "        มาตรา 13  (ยกเลิก)"
+    ]
+  },
+  {
+    "section": "มาตรา 14",
+    "paragraphs": [
+      "        มาตรา 14  (ยกเลิก)"
+    ]
+  },
+  {
+    "section": "มาตรา 15",
+    "paragraphs": [
+      "        มาตรา 15  (ยกเลิก)"
+    ]
+  },
+  {
+    "section": "มาตรา 16",
+    "paragraphs": [
+      "        มาตรา 16  (ยกเลิก)"
+    ]
+  },
+  {
+    "section": "มาตรา 17",
+    "paragraphs": [
+      "        มาตรา 17  (ยกเลิก)"
+    ]
+  },
+  {
+    "section": "มาตรา 18",
+    "paragraphs": [
+      "        มาตรา 18  (ยกเลิก)"
+    ]
+  },
+  {
+    "section": "มาตรา 19",
+    "paragraphs": [
+      "        มาตรา 19 ในคดีอาญาที่อยู่ในอำนาจศาลแขวง ที่จะพิจารณาพิพากษาได้ ผู้เสียหายหรือพนักงานอัยการจะฟ้องด้วยวาจาหรือเป็นหนังสือก็ได้ แต่ถ้าจำเลยร้องขอหรือศาลเห็นสมควร จะสั่งให้ฟ้องเป็นหนังสือก็ได้",
+      "        การฟ้องด้วยวาจานั้น ให้โจทก์แจ้งต่อศาลถึงชื่อโจทก์ ชื่อ ที่อยู่ และสัญชาติของจำเลย ฐานความผิด การกระทำที่อ้างว่าจำเลยได้กระทำความผิด ข้อเท็จจริง และรายละเอียดเกี่ยวกับเวลา สถานที่ และอื่น ๆ ที่เกี่ยวข้องพอสมควรเท่าที่จะให้จำเลยเข้าใจข้อหาได้ดี และมาตราในกฎหมายซึ่งบัญญัติว่า การกระทำเช่นนั้นเป็นความผิด",
+      "        จำเลยจะให้การด้วยวาจาหรือเป็นหนังสือก็ได้",
+      "        ในกรณีที่ฟ้องหรือให้การด้วยวาจา ให้ศาลบันทึกใจความไว้เป็นหลักฐาน และให้คู่ความลงชื่อไว้",
+      "        คำเบิกความของพยาน ให้ศาลบันทึกสารสำคัญโดยย่อ และให้พยานลงชื่อไว้"
+    ]
+  },
+  {
+    "section": "มาตรา 20",
+    "paragraphs": [
+      "        มาตรา 20  ในคดีอาญาที่อยู่ในอำนาจศาลแขวงที่จะพิจารณาพิพากษาได้ ถ้าผู้ต้องหาให้การรับสารภาพตลอดข้อหาต่อพนักงานสอบสวน ให้พนักงานสอบสวนนำผู้ต้องหามายังพนักงานอัยการหรือสั่งให้ผู้ต้องหาไปพบพนักงานอัยการในกรณีที่ผู้ต้องหามิได้ถูกควบคุมตัวเพื่อฟ้องศาลโดยมิต้องทำการสอบสวน และให้ฟ้องด้วยวาจา ให้ศาลถามผู้ต้องหาว่าจะให้การประการใด และถ้าผู้ต้องหายังให้การรับสารภาพ ให้ศาลบันทึกคำฟ้อง คำรับสารภาพ และทำคำพิพากษาในบันทึกฉบับเดียวกัน แล้วให้โจทก์จำเลยลงชื่อไว้ในบันทึกนั้น ถ้าผู้ต้องหาให้การปฏิเสธให้ศาลสั่งให้พนักงานอัยการรับตัวผู้ต้องหาคืนเพื่อดำเนินการต่อไป"
+    ]
+  },
+  {
+    "section": "มาตรา 21",
+    "paragraphs": [
+      "        มาตรา 21 ให้ศาลแขวงดำเนินการพิจารณาโดยเร็ว คำสั่งหรือคำพิพากษาจะกระทำด้วยวาจาก็ได้ แต่ให้ทำบันทึกไว้พอได้ใจความ"
+    ]
+  },
+  {
+    "section": "มาตรา 21 ทวิ",
+    "paragraphs": [
+      "        มาตรา 21 ทวิ  (ยกเลิก)"
+    ]
+  },
+  {
+    "section": "มาตรา 22",
+    "paragraphs": [
+      "        มาตรา 22  ในคดีอาญาห้ามมิให้อุทธรณ์คำพิพากษาของศาลแขวงในปัญหาข้อเท็จจริง เว้นแต่ในกรณีต่อไปนี้ให้จำเลยอุทธรณ์ในปัญหาข้อเท็จจริงได้"
+    ],
+    "sub_paragraphs": [
+      "        (1) จำเลยต้องคำพิพากษาให้ลงโทษจำคุก หรือให้ลงโทษกักขังแทนโทษจำคุก",
+      "        (2) จำเลยต้องคำพิพากษาให้ลงโทษจำคุก แต่ศาลรอการลงโทษไว้",
+      "        (3) ศาลพิพากษาว่าจำเลยมีความผิด แต่รอการกำหนดโทษไว้หรือ",
+      "        (4) จำเลยต้องคำพิพากษาให้ลงโทษปรับเกินหนึ่งพันบาท"
+    ]
+  },
+  {
+    "section": "มาตรา 22 ทวิ",
+    "paragraphs": [
+      "        มาตรา 22 ทวิ  ในคดีซึ่งต้องห้ามอุทธรณ์ตามมาตรา 22 ถ้าผู้พิพากษาคนใดซึ่งพิจารณาหรือลงชื่อในคำพิพากษาหรือทำความเห็นแย้งในศาลแขวงพิเคราะห์เห็นว่าข้อความที่ตัดสินนั้นเป็นปัญหาสำคัญอันควรสู่ศาลอุทธรณ์และอนุญาตให้อุทธรณ์ หรืออธิบดีกรมอัยการหรือพนักงานอัยการซึ่งอธิบดีกรมอัยการได้มอบหมายลงลายมือชื่อรับรองในอุทธรณ์ว่ามีเหตุอันควรที่ศาลอุทธรณ์จะได้วินิจฉัย ก็ให้รับอุทธรณ์นั้นไว้พิจารณาต่อไป"
+    ]
+  },
+  {
+    "section": "มาตรา 23",
+    "paragraphs": [
+      "        มาตรา 23  (ยกเลิก)"
+    ]
+  },
+  {
+    "section": "มาตรา 24",
+    "paragraphs": [
+      "        มาตรา 24  (ยกเลิก)"
+    ]
+  },
+  {
+    "section": "มาตรา 25",
+    "paragraphs": [
+      "        มาตรา 25  (ยกเลิก)"
+    ]
+  },
+  {
+    "section": "มาตรา 26",
+    "paragraphs": [
+      "        มาตรา 26  ให้ประธานศาลฎีกา นายกรัฐมนตรี รัฐมนตรีว่าการกระทรวงมหาดไทยและอัยการสูงสุด รักษาการตามพระราชบัญญัตินี้",
+      "        ให้ประธานศาลฎีกาและอัยการสูงสุดมีอำนาจออกข้อบังคับ และนายกรัฐมนตรี และรัฐมนตรีว่าการกระทรวงมหาดไทยมีอำนาจออกกฎกระทรวง เพื่อปฏิบัติการตามพระราชบัญญัตินี้ ทั้งนี้ ในส่วนที่เกี่ยวกับอำนาจหน้าที่ของตน"
+    ]
+  },
+  {
+    "section": "มาตรา 27",
+    "paragraphs": [
+      "        มาตรา 27  (ยกเลิก)"
+    ]
+  },
+  {
+    "section": "มาตรา 28",
+    "paragraphs": [
+      "        มาตรา 28  (ยกเลิก)"
+    ]
+  },
+  {
+    "section": "มาตรา 29",
+    "paragraphs": [
+      "        มาตรา 29 คดีอาญาทั้งหลายซึ่งอยู่ในระหว่างการสอบสวนของพนักงานสอบสวน การดำเนินคดีของพนักงานอัยการ หรือการพิจารณาของศาลก่อนวันใช้วิธีพิจารณาความอาญาตามบทบัญญัติแห่งพระราชบัญญัตินี้ ให้คงเป็นไปตามกฎหมายซึ่งใช้บังคับอยู่ก่อนนั้นจนกว่าจะถึงที่สุด"
+    ]
+  }
+]
+      }
+    };
+
+    // Global variables to hold search context
+    let currentLawType = '';
+    let currentLawName = '';
+    let currentSearchMode = '';
+    let lastKeyword = '';
+    let currentMatchedSections = [];
+    let currentSectionDisplayIndex = -1;
+
+    // Swipe gesture handling variables
+    let swipeStartX = 0;
+    let swipeCurrentX = 0;
+    let isSwiping = false;
+    let hasDragged = false;
+    const swipeThreshold = 50;
+
+    // Helper function to get a sortable value from a section string
+    function getSectionSortValue(sectionStr) {
+      const parts = sectionStr.split(' ');
+      const num = parseInt(parts[1]);
+      let suffixOrder = 0;
+      if (parts.length > 2) {
+        const suffix = parts[2];
+        switch (suffix) {
+          case 'ทวิ': suffixOrder = 1; break;
+          case 'ตรี': suffixOrder = 2; break;
+          case 'จัตวา': suffixOrder = 3; break;
+          case 'เบญจ': suffixOrder = 4; break;
+          default: suffixOrder = 99;
+        }
+      }
+      return num * 100 + suffixOrder;
+    }
+
+    // --- Helpers: normalize "มาตรา XX [suffix]" and Thai digits ---
+    function thaiDigitsToArabic(str) {
+      const map = {'๐':'0','๑':'1','๒':'2','๓':'3','๔':'4','๕':'5','๖':'6','๗':'7','๘':'8','๙':'9'};
+      return String(str).replace(/[๐-๙]/g, d => map[d]);
+    }
+    function normSectionTitle(s) {
+      const m = String(s).trim().match(/^มาตรา\s+([0-9๐-๙]+)(?:\s+(ทวิ|ตรี|จัตวา|เบญจ))?/);
+      if (!m) return {num: NaN, suffix: ''};
+      return { num: parseInt(thaiDigitsToArabic(m[1]), 10), suffix: m[2] || '' };
+    }
+    function findSectionIndexTolerant(list, targetStr) {
+      // exact match first
+      let idx = list.findIndex(it => it.section === targetStr);
+      if (idx !== -1) return idx;
+      const tgt = normSectionTitle(targetStr);
+      // normalize by parsed number + suffix
+      idx = list.findIndex(it => {
+        const sec = normSectionTitle(it.section);
+        if (sec.num === tgt.num && (sec.suffix||'') === (tgt.suffix||'')) return true;
+        // fallback: if "ทวิ/ตรี/ฯ" in first paragraph but section label lacks suffix
+        if (tgt.suffix && !sec.suffix && it.paragraphs && it.paragraphs.length > 0) {
+          const p0 = String(it.paragraphs[0]).trim();
+          if (p0.startsWith(`มาตรา ${tgt.num} ${tgt.suffix}`)) return true;
+        }
+        return false;
+      });
+      return idx;
+    }
+
+
+    // Swipe event handlers
+    function handleSwipeStart(e) {
+      if (currentSearchMode !== 'section' || currentMatchedSections.length <= 1) return;
+      isSwiping = true; hasDragged = false;
+      swipeStartX = (e.touches ? e.touches[0].clientX : e.clientX);
+    }
+    function handleSwipeMove(e) {
+      if (!isSwiping || currentSearchMode !== 'section' || currentMatchedSections.length <= 1) return;
+      swipeCurrentX = (e.touches ? e.touches[0].clientX : e.clientX);
+      if (Math.abs(swipeCurrentX - swipeStartX) > 5) { hasDragged = true; }
+    }
+    function handleSwipeEnd(e) {
+      if (!isSwiping || currentSearchMode !== 'section' || currentMatchedSections.length <= 1) return;
+      isSwiping = false;
+      if (hasDragged) {
+        const diffX = swipeCurrentX - swipeStartX;
+        if (diffX > swipeThreshold) { window.showPreviousSection(); } 
+        else if (diffX < -swipeThreshold) { window.showNextSection(); }
+      }
+      swipeStartX = 0; swipeCurrentX = 0; hasDragged = false;
+    }
+
+    // Copies text to the clipboard
+    window.copyToClipboard = function(text) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      window.showCustomAlert('คัดลอกข้อความแล้ว!');
+      document.body.removeChild(textarea);
+    }
+
+    // Displays a custom alert modal
+    window.showCustomAlert = function(message) {
+        const alertBox = document.createElement('div');
+        alertBox.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4';
+        alertBox.innerHTML = `<div class="bg-white p-6 rounded-lg shadow-lg text-center w-full max-w-sm"><p class="text-lg font-semibold mb-4">${message}</p><button class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600" onclick="this.closest('.fixed').remove()">ตกลง</button></div>`;
+        document.body.appendChild(alertBox);
+    }
+
+    // Rich text editor command executor
+    window.formatDoc = function(command, value = null) {
+        document.execCommand(command, false, value);
+        document.getElementById('noteEditor').focus();
+    }
+
+    // Generates a unique key for storing a note in localStorage
+    function getNoteStorageKey(lawType, lawName, section) {
+        return `note::${lawType}::${lawName}::${section}`;
+    }
+
+    // Toggles the visibility of the note-taking panel
+    window.toggleNotePanel = function() {
+      const notePanel = document.getElementById('notePanel');
+      isNotePanelVisible = !isNotePanelVisible;
+      if (isNotePanelVisible) {
+        notePanel.classList.remove('hidden');
+        loadNoteForCurrentSection();
+      } else {
+        notePanel.classList.add('hidden');
+      }
+    }
+
+    // Saves the current note to localStorage
+    window.saveNote = function(isManualSave = true) {
+      if (currentSectionDisplayIndex === -1 || currentMatchedSections.length === 0) return;
+      
+      const noteEditor = document.getElementById('noteEditor');
+      const noteStatus = document.getElementById('noteStatus');
+      const noteHtml = noteEditor.innerHTML;
+      const noteText = noteEditor.textContent || noteEditor.innerText;
+
+      if (!isNotePanelVisible) return;
+      
+      const currentSection = currentMatchedSections[currentSectionDisplayIndex];
+      const noteKey = getNoteStorageKey(currentLawType, currentLawName, currentSection.section);
+
+      if (noteText.trim() === '') {
+          if (localStorage.getItem(noteKey)) {
+              localStorage.removeItem(noteKey);
+              if (isManualSave) {
+                  noteStatus.textContent = 'โน้ตว่างเปล่า ถูกลบแล้ว';
+                  setTimeout(() => { noteStatus.textContent = ''; }, 2000);
+              }
+          }
+          return;
+      }
+      
+      if (isManualSave) noteStatus.textContent = 'กำลังบันทึก...';
+
+      try {
+        localStorage.setItem(noteKey, noteHtml);
+        if (isManualSave) {
+            noteStatus.textContent = 'บันทึกโน้ตเรียบร้อยแล้ว!';
+            setTimeout(() => {
+                if(noteStatus.textContent === 'บันทึกโน้ตเรียบร้อยแล้ว!'){
+                    noteStatus.textContent = '';
+                }
+            }, 2000);
+        }
+      } catch (e) {
+        noteStatus.textContent = 'เกิดข้อผิดพลาดในการบันทึก: ' + e.message;
+      }
+    }
+
+    // Loads the note for the currently displayed section
+    function loadNoteForCurrentSection() {
+      const noteEditor = document.getElementById('noteEditor');
+      const noteStatus = document.getElementById('noteStatus');
+      if (currentSectionDisplayIndex === -1 || currentMatchedSections.length === 0) {
+        noteEditor.innerHTML = '';
+        noteStatus.textContent = 'ไม่มีโน้ตสำหรับมาตรานี้';
+        return;
+      }
+      const currentSection = currentMatchedSections[currentSectionDisplayIndex];
+      const noteKey = getNoteStorageKey(currentLawType, currentLawName, currentSection.section);
+      const savedNote = localStorage.getItem(noteKey);
+      noteEditor.innerHTML = savedNote || '';
+      noteStatus.textContent = savedNote ? 'โหลดโน้ตเรียบร้อยแล้ว' : 'ยังไม่มีโน้ตสำหรับมาตรานี้';
+    }
+
+    // Renders the content for the currently selected section
+    function renderSectionDisplay() {
+      const resultsDiv = document.getElementById("results");
+      const sectionNavButtons = document.getElementById("sectionNavButtons");
+      const notePanel = document.getElementById('notePanel');
+      
+      if (currentSectionDisplayIndex === -1 || currentMatchedSections.length === 0) {
+        resultsDiv.innerHTML = "<p class='text-center text-gray-500'>ไม่พบข้อมูลที่ตรงกับเงื่อนไขที่ค้นหา</p>";
+      } else {
+        const item = currentMatchedSections[currentSectionDisplayIndex];
+        let fullTextToCopy = `${item.section}\n`;
+        let cardContent = `<div class="section-title font-bold text-blue-800 text-lg mb-2">${item.section}</div>`;
+        
+        
+        item.paragraphs.forEach(p => {
+          let sPara = String(p).trim();
+          sPara = sPara.replace(/\n[ \t]+/g, '\n');
+          // Preserve original text to copy
+          fullTextToCopy += `${sPara}\n`;
+
+          // Detect leading marker like (1), (๒), (ก) ...
+          const m = sPara.match(/^\(([0-9๐-๙A-Za-zก-ฮ]+)\)\s*(.*)$/s);
+          let bodyText = m ? m[2] : sPara;
+
+          // Highlight keyword if needed
+          let paragraphHtml = bodyText;
+          if (lastKeyword && currentSearchMode === 'keyword') {
+            const regex = new RegExp(`(${lastKeyword})`, 'gi');
+            paragraphHtml = bodyText.replace(regex, '<span class="highlight">$1</span>');
+          }
+
+          if (m) {
+            cardContent += `<div class='paragraph hanging text-gray-700'>(${m[1]}) ${paragraphHtml}</div>`;
+          } else {
+            cardContent += `<div class='paragraph text-gray-700'>${paragraphHtml}</div>`;
+          }
+        });
+
+        // Render sub_paragraphs if present
+        if (Array.isArray(item.sub_paragraphs) && item.sub_paragraphs.length > 0) {
+          cardContent += `<div class='sublist'>`;
+          item.sub_paragraphs.forEach(sp => {
+            let sTrim = String(sp).trim();
+            sTrim = sTrim.replace(/\n[ \t]+/g, '\n');
+            fullTextToCopy += `${sTrim}\n`;
+            const sm = sTrim.match(/^\(([0-9๐-๙A-Za-zก-ฮ]+)\)\s*(.*)$/s);
+            let sBody = sm ? sm[2] : sTrim;
+            let sHtml = sBody;
+            if (lastKeyword && currentSearchMode === 'keyword') {
+              const sregex = new RegExp(`(${lastKeyword})`, 'gi');
+              sHtml = sBody.replace(sregex, '<span class="highlight">$1</span>');
+            }
+            if (sm) {
+              cardContent += `<div class='paragraph hanging text-gray-700'>(${sm[1]}) ${sHtml}</div>`;
+            } else {
+              cardContent += `<div class='paragraph text-gray-700'>${sHtml}</div>`;
+            }
+          });
+          cardContent += `</div>`;
+        }
+    resultsDiv.innerHTML = `<div class="flashcard bg-white py-4 px-2 sm:py-6 sm:px-4 rounded-lg shadow-md mb-2 border border-gray-200 relative"><button class="copy-button" onclick="window.copyToClipboard(\`${fullTextToCopy.replace(/`/g, '\\`')}\`)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 1H4C2.895 1 2 1.895 2 3v14h2V3h12V1zm3 4H8C6.895 5 6 5.895 6 7v14c0 1.105.895 2 2 2h11c1.105 0 2-.895 2-2V7c0-1.105-.895-2-2-2zm0 16H8V7h11v14z"/></svg></button>${cardContent}</div>`;
+      }
+
+      if (currentSearchMode === 'section' && currentMatchedSections.length > 0) {
+        sectionNavButtons.style.display = 'flex';
+        document.getElementById('prevSectionBtn').disabled = (currentSectionDisplayIndex === 0);
+        document.getElementById('nextSectionBtn').disabled = (currentSectionDisplayIndex === currentMatchedSections.length - 1);
+        if (isNotePanelVisible) loadNoteForCurrentSection();
+      } else {
+        sectionNavButtons.style.display = 'none';
+        notePanel.classList.add('hidden');
+        isNotePanelVisible = false;
+      }
+    }
+
+    // Displays the previous section in the list
+    window.showPreviousSection = function() {
+      if (currentSectionDisplayIndex > 0) {
+        if (isNotePanelVisible) window.saveNote(false);
+        currentSectionDisplayIndex--;
+        renderSectionDisplay();
+      }
+    }
+
+    // Displays the next section in the list
+    window.showNextSection = function() {
+      if (currentSectionDisplayIndex < currentMatchedSections.length - 1) {
+        if (isNotePanelVisible) window.saveNote(false);
+        currentSectionDisplayIndex++;
+        renderSectionDisplay();
+      }
+    }
+
+    // Main function to execute on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Set global context from URL parameters
+        currentLawType = urlParams.get('lawType');
+        currentLawName = decodeURIComponent(urlParams.get('lawName'));
+        currentSearchMode = urlParams.get('searchMode');
+        const query = decodeURIComponent(urlParams.get('query'));
+        const suffix = urlParams.get('suffix');
+        const openNote = urlParams.get('openNote');
+
+        document.getElementById('resultsTitle').textContent = currentLawName;
+
+        const allSectionsInCurrentLaw = lawData[currentLawType]?.[currentLawName] || [];
+        const sortedSections = allSectionsInCurrentLaw.sort((a, b) => getSectionSortValue(a.section) - getSectionSortValue(b.section));
+
+        if (currentSearchMode === 'section') {
+            let targetSectionQuery = `มาตรา ${query}`;
+            if (suffix) targetSectionQuery += ` ${suffix}`;
+            
+            const foundIndex = findSectionIndexTolerant(sortedSections, targetSectionQuery);
+            
+            if (foundIndex !== -1) {
+                currentMatchedSections = sortedSections;
+                currentSectionDisplayIndex = foundIndex;
+                renderSectionDisplay();
+            } else {
+                document.getElementById("results").innerHTML = "<p class='text-center text-gray-500'>ไม่พบมาตราที่ค้นหา</p>";
+            }
+        } else { // Keyword search
+            lastKeyword = query;
+            const matchedByKeyword = sortedSections.filter(item => 
+                (item.paragraphs && item.paragraphs.some(p => p.includes(lastKeyword))) ||
+                (item.sub_paragraphs && item.sub_paragraphs.some(sp => sp.includes(lastKeyword)))
+            );
+            
+            if (matchedByKeyword.length > 0) {
+                currentMatchedSections = matchedByKeyword;
+                currentSectionDisplayIndex = -1; // Indicate list view, not single item view
+                
+                let html = '';
+                matchedByKeyword.forEach(item => {
+                    let fullTextToCopy = `${item.section}\n`;
+                    let cardContent = `<div class="section-title font-bold text-blue-800 text-lg mb-2">${item.section}</div>`;
+                    item.paragraphs.forEach(p => {
+                        const regex = new RegExp(`(${lastKeyword})`, 'gi');
+                        const paragraphHtml = p.replace(regex, '<span class="highlight">$1</span>');
+                        cardContent += `<div class='paragraph text-gray-700'>${paragraphHtml}</div>`;
+                        fullTextToCopy += `${p}\n`;
+                    });
+                    // Render sub_paragraphs if present
+                    if (Array.isArray(item.sub_paragraphs) && item.sub_paragraphs.length > 0) {
+                        cardContent += `<div class='sublist'>`;
+                        item.sub_paragraphs.forEach(sp => {
+                            const sregex = new RegExp(`(${lastKeyword})`, 'gi');
+                            const sHtml = String(sp).replace(sregex, '<span class="highlight">$1</span>');
+                            // For sub paragraphs we still use hanging style (numbers/letters are in text)
+                            // We'll auto-detect marker but for simplicity display as hanging block
+                            const sm = String(sp).trim().match(/^\(([0-9๐-๙ก-ฮ]+)\)\s*(.*)$/s);
+                            if (sm) {
+                              cardContent += `<div class='paragraph hanging text-gray-700'>(${sm[1]}) ${sm[2].replace(sregex, '<span class="highlight">$1</span>')}</div>`;
+                            } else {
+                              cardContent += `<div class='paragraph text-gray-700'>${sHtml}</div>`;
+                            }
+                            fullTextToCopy += `${sp}\n`;
+                        });
+                        cardContent += `</div>`;
+                    }
+
+                    html += `<div class="flashcard bg-white py-4 px-2 sm:py-6 sm:px-4 rounded-lg shadow-md mb-2 border border-gray-200 relative"><button class="copy-button" onclick="window.copyToClipboard(\`${fullTextToCopy.replace(/`/g, '\\`')}\`)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 1H4C2.895 1 2 1.895 2 3v14h2V3h12V1zm3 4H8C6.895 5 6 5.895 6 7v14c0 1.105.895 2 2 2h11c1.105 0 2-.895 2-2V7c0-1.105-.895-2-2-2zm0 16H8V7h11v14z"/></svg></button>${cardContent}</div>`;
+                });
+                document.getElementById("results").innerHTML = html;
+                document.getElementById("sectionNavButtons").style.display = 'none';
+
+            } else {
+                document.getElementById("results").innerHTML = "<p class='text-center text-gray-500'>ไม่พบข้อมูลที่ตรงกับคำสำคัญที่ค้นหา</p>";
+            }
+        }
+        
+        // Add swipe listeners
+        const resultsView = document.getElementById('resultsView');
+        resultsView.addEventListener('mousedown', handleSwipeStart);
+        resultsView.addEventListener('mousemove', handleSwipeMove);
+        resultsView.addEventListener('mouseup', handleSwipeEnd);
+        resultsView.addEventListener('mouseleave', handleSwipeEnd);
+        resultsView.addEventListener('touchstart', handleSwipeStart);
+        resultsView.addEventListener('touchmove', handleSwipeMove);
+        resultsView.addEventListener('touchend', handleSwipeEnd);
+
+        // Add note editor listener
+        const noteEditor = document.getElementById('noteEditor');
+        noteEditor.addEventListener('input', () => {
+            const noteStatus = document.getElementById('noteStatus');
+            noteStatus.textContent = 'กำลังพิมพ์...';
+            clearTimeout(noteSaveTimeout);
+            noteSaveTimeout = setTimeout(() => { window.saveNote(false); }, 1500);
+        });
+
+        // Open note panel if requested from index page
+        if (openNote === 'true' && currentSectionDisplayIndex !== -1) {
+            toggleNotePanel();
+        }
+    });
+  </script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const titleWrapper = document.getElementById('titleWrapper');
+  const titleBtn = document.getElementById('resultsTitleBtn');
+  const titleTextSpan = document.getElementById('resultsTitleText');
+  const titleDropdown = document.getElementById('titleDropdown');
+
+  // อ่านชื่อกฎหมายจากตัวแปรเดิมถ้ามี
+  try {
+    if (typeof currentLawName !== 'undefined' && currentLawName != null) {
+      titleTextSpan.textContent = String(currentLawName);
+      const legacy = document.getElementById('resultsTitle');
+      if (legacy) legacy.textContent = String(currentLawName);
+    }
+  } catch (e) { /* ignore */ }
+
+  function toggleTitleMenu(forceState) {
+    const willOpen = (typeof forceState === 'boolean') ? forceState : titleDropdown.classList.contains('hidden');
+    if (willOpen) {
+      titleDropdown.classList.remove('hidden');
+      titleWrapper.classList.add('open');
+    } else {
+      titleDropdown.classList.add('hidden');
+      titleWrapper.classList.remove('open');
+    }
+  }
+
+  if (titleBtn) {
+    titleBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      toggleTitleMenu();
+    });
+  }
+
+  if (titleDropdown) {
+    titleDropdown.querySelectorAll('button[data-link]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        var url = e.currentTarget.getAttribute('data-link') || 'https://www.google.com';
+        window.location.href = url;
+      });
+    });
+  }
+
+  document.addEventListener('click', function (e) {
+    if (titleWrapper && !titleWrapper.contains(e.target)) {
+      toggleTitleMenu(false);
+    }
+  });
+});
+</script>
+</body>
+</html>
